@@ -58,7 +58,7 @@ const Layout = ({ children }) => {
                 aria-label="Cart"
               >
                 {cartHasItems && (
-                  <span className="absolute bg-red-500 rounded-full w-2 h-2 top-0 right-0 -mt-1 -mr-1"></span>
+                  <span className="absolute bg-blue-600 rounded-full w-2 h-2 top-0 right-0 -mt-1 -mr-1"></span>
                 )}
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
