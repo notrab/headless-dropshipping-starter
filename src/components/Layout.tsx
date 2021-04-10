@@ -1,9 +1,12 @@
 import Link from "next/link";
 
 import useWishlistState from "../hooks/useWishlistState";
+import useSnipcartCount from "../hooks/useSnipcartCount";
 
 const Layout = ({ children }) => {
   const { hasItems } = useWishlistState();
+  const { cart } = useSnipcartCount();
+  const cartHasItems = cart.items.count !== 0;
 
   return (
     <>
@@ -51,9 +54,12 @@ const Layout = ({ children }) => {
                 </a>
               </Link>
               <button
-                className="snipcart-checkout appearance-none px-2 text-gray-800 hover:text-blue-600 rounded-md cursor-pointer focus:outline-none focus:text-blue-600 transition"
+                className="snipcart-checkout appearance-none px-2 text-gray-800 hover:text-blue-600 rounded-md cursor-pointer focus:outline-none focus:text-blue-600 transition relative"
                 aria-label="Cart"
               >
+                {cartHasItems && (
+                  <span className="absolute bg-red-500 rounded-full w-2 h-2 top-0 right-0 -mt-1 -mr-1"></span>
+                )}
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
