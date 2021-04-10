@@ -60,6 +60,7 @@ export default async (
     shippingAddress2,
     shippingAddressCity,
     shippingAddressCountry,
+    shippingAddressProvince,
     shippingAddressPostalCode,
     shippingAddressPhone,
   } = content;
@@ -69,6 +70,7 @@ export default async (
     ...(shippingAddress2 && { address2: shippingAddress2 }),
     ...(shippingAddressCity && { city: shippingAddressCity }),
     ...(shippingAddressCountry && { country_code: shippingAddressCountry }),
+    ...(shippingAddressProvince && { state_code: shippingAddressProvince }),
     ...(shippingAddressPostalCode && { zip: shippingAddressPostalCode }),
     ...(shippingAddressPhone && { phone: shippingAddressPhone }),
   };
@@ -94,13 +96,13 @@ export default async (
         guaranteedDaysToDelivery: rate.maxDeliveryDays,
       })),
     });
-  } catch (err) {
-    console.log(err);
+  } catch ({ error }) {
+    console.log(error);
     res.status(200).json({
       errors: [
         {
-          key: "invalid_postal_code",
-          message: "The postal code is invalid.",
+          key: error?.reason,
+          message: error?.message,
         },
       ],
     });

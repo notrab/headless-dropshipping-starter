@@ -73,6 +73,7 @@ export default async (
     address2,
     city,
     country,
+    province,
     postalCode,
     phone,
   } = shippingAddress;
@@ -82,6 +83,7 @@ export default async (
     ...(address2 && { address2 }),
     ...(city && { city: city }),
     ...(country && { country_code: country }),
+    ...(province && { state_code: province }),
     ...(postalCode && { zip: postalCode }),
     ...(phone && { phone }),
   };
@@ -109,13 +111,13 @@ export default async (
         },
       ],
     });
-  } catch (err) {
-    console.log(err);
+  } catch ({ error }) {
+    console.log(error);
     res.status(200).json({
       errors: [
         {
-          key: "oops",
-          message: "Something went wrong.",
+          key: error?.reason,
+          message: error?.message,
         },
       ],
     });
