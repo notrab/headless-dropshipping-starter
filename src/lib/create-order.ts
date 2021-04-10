@@ -8,6 +8,8 @@ type PrintfulShippingItem = {
 };
 
 const createOrder = async ({
+  invoiceNumber,
+  email,
   user,
   items,
   shippingRateUserDefinedId,
@@ -24,6 +26,7 @@ const createOrder = async ({
     }),
     ...(shippingAddress.postalCode && { zip: shippingAddress.postalCode }),
     ...(shippingAddress.phone && { phone: shippingAddress.phone }),
+    email,
   };
 
   const printfulItems: PrintfulShippingItem[] = items.map(
@@ -34,6 +37,7 @@ const createOrder = async ({
   );
 
   const { result } = await printful.post("orders", {
+    external_id: invoiceNumber,
     recipient: printfulRecipient,
     items: printfulItems,
     shipping: shippingRateUserDefinedId,
