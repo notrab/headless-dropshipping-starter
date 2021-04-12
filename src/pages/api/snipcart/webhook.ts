@@ -19,19 +19,19 @@ export default async (req: SnipcartRequest, res: NextApiResponse) => {
 
   if (!token) return res.status(401).json({ message: "Not Authorized" });
 
-  try {
-    const verifyToken = await fetch(
-      `https://app.snipcart.com/api/requestvalidation/${token}`
-    );
+  // try {
+  //   const verifyToken = await fetch(
+  //     `https://app.snipcart.com/api/requestvalidation/${token}`
+  //   );
 
-    if (!verifyToken.ok)
-      return res.status(401).json({ message: "Not Authorization" });
-  } catch (err) {
-    console.log(err);
-    return res
-      .status(500)
-      .json({ message: "Unable to verify Snipcart webhook token" });
-  }
+  //   if (!verifyToken.ok)
+  //     return res.status(401).json({ message: "Not Authorization" });
+  // } catch (err) {
+  //   console.log(err);
+  //   return res
+  //     .status(500)
+  //     .json({ message: "Unable to verify Snipcart webhook token" });
+  // }
 
   try {
     switch (eventName) {
