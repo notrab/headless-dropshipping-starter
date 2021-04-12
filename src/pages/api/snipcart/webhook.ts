@@ -7,7 +7,9 @@ import type { SnipcartRequest, SnipcartWebhookEvent } from "../../../types";
 export default async (req: SnipcartRequest, res: NextApiResponse) => {
   const allowedEvents: SnipcartWebhookEvent[] = ["order.completed"];
 
+  console.log(req.headers);
   const token = req.headers["X-Snipcart-RequestToken"];
+  console.log(token);
 
   const { eventName, content } = req.body;
 
