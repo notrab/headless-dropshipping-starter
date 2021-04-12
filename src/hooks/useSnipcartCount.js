@@ -1,5 +1,7 @@
 import { useReducer, useEffect } from "react";
 
+import { hasSnipcart } from "../lib/has-snipcart";
+
 const initialState = {
   cart: {
     items: [],
@@ -23,7 +25,7 @@ const useSnipcartCount = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   useEffect(() => {
-    if (typeof window !== "undefined" && window.Snipcart !== "undefined") {
+    if (hasSnipcart()) {
       const unsubscribe = window.Snipcart.store.subscribe(() => {
         const itemsCount = window.Snipcart.store.getState();
 

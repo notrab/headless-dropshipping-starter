@@ -1,5 +1,11 @@
 import type { NextApiRequest } from "next";
 
+declare global {
+  interface Window {
+    Snipcart: any;
+  }
+}
+
 export type SnipcartWebhookEvent =
   | "order.completed"
   | "order.status.changed"
@@ -23,6 +29,26 @@ export interface SnipcartWebhookContent {
   [key: string]: any;
 }
 
+export type SnipcartShippingRate = {
+  /** Shipping method's price. */
+  cost: number;
+  /** Name or description of the shipping method. */
+  description: string;
+  /** Estimated time for delivery in days. */
+  guaranteedDaysToDelivery?: number;
+  /** Internal ID of shipping method, can be useful when using shipping fulfillment solutions. */
+  userDefinedId?: string;
+};
+
+export type SnipcartTaxItem = {
+  name: string;
+  amount: number;
+  rate: number;
+  numberForInvoice?: string;
+  includedInPrice?: boolean;
+  appliesOnShipping?: boolean;
+};
+
 export interface SnipcartRequest extends NextApiRequest {
   body: {
     eventName: SnipcartWebhookEvent;
@@ -44,3 +70,8 @@ export interface PrintfulProduct {
   id: string;
   name: string;
 }
+
+export type PrintfulShippingItem = {
+  external_variant_id: string;
+  quantity: number;
+};

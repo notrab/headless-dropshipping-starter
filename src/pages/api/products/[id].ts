@@ -21,20 +21,20 @@ export default async (
   try {
     const { result } = await printful.get(`store/variants/@${id}`);
 
-    console.log(result);
+    res.setHeader("Cache-Control", "s-maxage=3600, stale-while-revalidate");
 
     res.status(200).json({
       id: id as string,
       price: result.retail_price,
-      url: `/products/${id}`,
+      url: `/api/products/${id}`,
     });
-  } catch (err) {
-    console.log(err);
-    res.status(200).json({
+  } catch ({ error }) {
+    console.log(error);
+    res.status(404).json({
       errors: [
         {
-          key: "500",
-          message: "Something went wrong",
+          key: error?.message,
+          message: error?.message,
         },
       ],
     });

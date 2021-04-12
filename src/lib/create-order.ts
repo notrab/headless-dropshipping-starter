@@ -1,11 +1,6 @@
 import { printful } from "./printful-client";
 
-import type { SnipcartWebhookContent } from "../types";
-
-type PrintfulShippingItem = {
-  external_variant_id: string;
-  quantity: number;
-};
+import type { SnipcartWebhookContent, PrintfulShippingItem } from "../types";
 
 const createOrder = async ({
   invoiceNumber,

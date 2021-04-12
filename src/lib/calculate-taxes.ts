@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { printful } from "../../../lib/printful-client";
+import { printful } from "./printful-client";
+import type { SnipcartTaxItem, PrintfulShippingItem } from "../types";
 
 interface SnipcartRequest extends NextApiRequest {
   body: {
@@ -13,34 +14,18 @@ interface SnipcartRequest extends NextApiRequest {
 
 type Data = {
   /** An array of tax rates. */
-  taxes: TaxItem[];
+  taxes: SnipcartTaxItem[];
 };
 
 type Error = {
   errors: { key: string; message: string }[];
 };
 
-type TaxItem = {
-  name: string;
-  amount: number;
-  rate: number;
-  numberForInvoice?: string;
-  includedInPrice?: boolean;
-  appliesOnShipping?: boolean;
-};
-
-type PrintfulShippingItem = {
-  external_variant_id: string;
-  quantity: number;
-};
-
-export default async (
+const calculateTaxes = async (
   req: SnipcartRequest,
   res: NextApiResponse<Data | Error>
 ) => {
-  const { eventName, content } = req.body;
-
-  if (eventName !== "taxes.calculate") return res.status(200).end();
+  const { content } = req.body;
 
   if (content.items.length === 0)
     return res.status(200).json({
@@ -123,3 +108,5 @@ export default async (
     });
   }
 };
+
+export default calculateTaxes;

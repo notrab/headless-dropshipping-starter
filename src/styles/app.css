@@ -39,6 +39,36 @@
   @apply text-sm text-gray-500 my-6;
 }
 
+.snipcart-shipping-rates-list-item--highlight {
+  @apply border-blue-600 bg-white;
+}
+
+.snipcart-form-radio {
+  @apply text-blue-600 border-gray-300 shadow-sm focus:ring-0 p-0;
+}
+
+.snipcart-form-radio + label {
+  @apply text-gray-500 text-sm;
+}
+
+.snipcart-form-radio + label:before {
+  background-image: none;
+  @apply rounded-full w-4 h-4 min-w-0 min-h-0 shadow-sm flex items-center border border-gray-300 cursor-pointer;
+}
+
+.snipcart-form-radio:checked + label:before {
+  background-image: none;
+  @apply bg-blue-600;
+}
+
+.snipcart-form-radio:checked + label:after {
+  @apply hidden;
+}
+
+.snipcart-shipping-rates-list-item__price {
+  @apply text-gray-900 text-sm leading-5;
+}
+
 /* .snipcart-modal,
 .snipcart-cart-header,
 .snipcart-cart__secondary-header,

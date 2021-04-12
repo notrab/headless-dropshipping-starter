@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { printful } from "../../../lib/printful-client";
+import { printful } from "./printful-client";
+import type { SnipcartShippingRate, PrintfulShippingItem } from "../types";
 
 interface SnipcartRequest extends NextApiRequest {
   body: {
@@ -13,27 +14,11 @@ interface SnipcartRequest extends NextApiRequest {
 
 type Data = {
   /** An array of shipping rates. */
-  rates: Rate[];
+  rates: SnipcartShippingRate[];
 };
 
 type Error = {
   errors: { key: string; message: string }[];
-};
-
-type Rate = {
-  /** Shipping method's price. */
-  cost: number;
-  /** Name or description of the shipping method. */
-  description: string;
-  /** Estimated time for delivery in days. */
-  guaranteedDaysToDelivery?: number;
-  /** Internal ID of shipping method, can be useful when using shipping fulfillment solutions. */
-  userDefinedId?: string;
-};
-
-type PrintfulShippingItem = {
-  external_variant_id: string;
-  quantity: number;
 };
 
 export default async (

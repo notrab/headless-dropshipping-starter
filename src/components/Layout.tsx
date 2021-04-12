@@ -92,7 +92,14 @@ const Layout = ({ children }) => {
       <footer className="max-w-6xl mx-auto px-6">
         <div className="py-6 border-t border-gray-100 text-center flex flex-col md:flex-row items-center justify-between">
           <p className="text-gray-600 text-sm">
-            Powered by Snipcart &amp; Printful
+            Powered by Snipcart &amp; Printful &mdash;{" "}
+            <a
+              href="https://launchmade.com"
+              target="_blank"
+              className="text-gray-800 hover:text-blue-600"
+            >
+              A LaunchMade Product
+            </a>
           </p>
           <nav className="flex items-center justify-end space-x-3 md:space-x-6">
             <Link href="/about">
