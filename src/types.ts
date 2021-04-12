@@ -51,7 +51,7 @@ export type SnipcartTaxItem = {
 
 export interface SnipcartRequest extends NextApiRequest {
   headers: {
-    "X-Snipcart-RequestToken"?: string;
+    "x-snipcart-requesttoken"?: string;
   };
   body: {
     eventName: SnipcartWebhookEvent;
