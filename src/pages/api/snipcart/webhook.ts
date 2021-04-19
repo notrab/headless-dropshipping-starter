@@ -19,7 +19,7 @@ export default async (req: SnipcartRequest, res: NextApiResponse) => {
   if (!allowedEvents.includes(eventName))
     return res.status(400).json({ message: "This event is not permitted" });
 
-  if (!token) return res.status(401).json({ message: "Not Authorized" });
+  // if (!token) return res.status(401).json({ message: "Not Authorized" });
 
   // try {
   //   const verifyToken = await fetch(
@@ -43,6 +43,8 @@ export default async (req: SnipcartRequest, res: NextApiResponse) => {
       default:
         throw new Error("No such event handler exists");
     }
+
+    res.status(200).json({ message: "Done" });
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Something went wrong" });

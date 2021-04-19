@@ -16,8 +16,8 @@ const createOrder = async ({
     ...(shippingAddress.address2 && { address2: shippingAddress.address2 }),
     ...(shippingAddress.city && { city: shippingAddress.city }),
     ...(shippingAddress.country && { country_code: shippingAddress.country }),
-    ...(shippingAddress.shippingAddressProvince && {
-      state_code: shippingAddress.shippingAddressProvince,
+    ...(shippingAddress.province && {
+      state_code: shippingAddress.province,
     }),
     ...(shippingAddress.postalCode && { zip: shippingAddress.postalCode }),
     ...(shippingAddress.phone && { phone: shippingAddress.phone }),
