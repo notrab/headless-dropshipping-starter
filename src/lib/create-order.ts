@@ -5,13 +5,11 @@ import type { SnipcartWebhookContent, PrintfulShippingItem } from "../types";
 const createOrder = async ({
   invoiceNumber,
   email,
-  user,
+  shippingAddress,
   items,
   shippingRateUserDefinedId,
 }: SnipcartWebhookContent) => {
-  const { shippingAddress } = user;
-
-  const printfulRecipient = {
+  const recipient = {
     ...(shippingAddress.address1 && { address1: shippingAddress.address1 }),
     ...(shippingAddress.address2 && { address2: shippingAddress.address2 }),
     ...(shippingAddress.city && { city: shippingAddress.city }),
@@ -33,7 +31,7 @@ const createOrder = async ({
 
   const { result } = await printful.post("orders", {
     external_id: invoiceNumber,
-    recipient: printfulRecipient,
+    recipient,
     items: printfulItems,
     shipping: shippingRateUserDefinedId,
   });

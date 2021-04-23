@@ -24,7 +24,20 @@ export type SnipcartWebhookEvent =
 export interface SnipcartWebhookContent {
   discounts: { [key: string]: any };
   items: { [key: string]: any };
-  user: { [key: string]: any };
+  shippingAddress: {
+    fullName: string;
+    firstName?: string;
+    name: string;
+    company?: string;
+    address1: string;
+    address2?: string;
+    fullAddress: string;
+    city: string;
+    country: string;
+    postalCode: string;
+    province: string;
+    phone?: string;
+  };
   shippingRateUserDefinedId?: string;
   [key: string]: any;
 }
