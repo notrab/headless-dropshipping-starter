@@ -8,6 +8,8 @@
   },
   "author": "Jamie Barton <jamie@notrab.dev> (https://notrab.dev)",
   "dependencies": {
+    "@mdx-js/loader": "1.6.22",
+    "@next/mdx": "10.1.3",
     "@tailwindcss/typography": "0.4.0",
     "lodash.shuffle": "4.2.0",
     "next": "10.1.0",

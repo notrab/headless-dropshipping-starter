@@ -29,8 +29,17 @@ const Layout = ({ children }) => {
             </div>
             <div className="flex-1 flex items-center justify-center">
               <Link href="/">
-                <a className="text-xl font-medium text-gray-800 hover:text-blue-600 p-1 transition">
-                  Next.js Dropshipping Starter
+                <a className="flex items-center text-gray-900">
+                  <div className="rounded-full w-12 h-12 flex items-center justify-center mr-4">
+                    <img
+                      className="w-full h-full fill-current"
+                      src="/logo.svg"
+                      role="presentation"
+                    />
+                  </div>
+                  <span className="text-lg font-medium">
+                    Headless Dropshipping Starter
+                  </span>
                 </a>
               </Link>
             </div>
@@ -92,13 +101,13 @@ const Layout = ({ children }) => {
       <footer className="max-w-6xl mx-auto px-6">
         <div className="py-6 border-t border-gray-100 text-center flex flex-col md:flex-row items-center justify-between">
           <p className="text-gray-600 text-sm">
-            Powered by Snipcart &amp; Printful &mdash;{" "}
+            Powered by
             <a
-              href="https://launchmade.com"
+              href="https://headlessdropshipping.com"
               target="_blank"
-              className="text-gray-800 hover:text-blue-600"
+              className="ml-0.5 text-gray-800 hover:text-blue-600"
             >
-              A LaunchMade Product
+              Headless Dropshipping Starter
             </a>
           </p>
           <nav className="flex items-center justify-end space-x-3 md:space-x-6">
