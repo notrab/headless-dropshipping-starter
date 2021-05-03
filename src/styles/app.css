@@ -1,0 +1,116 @@
+.snipcart {
+  @apply font-sans text-base text-gray-800 font-normal;
+}
+
+.snipcart-modal,
+.snipcart-modal__container,
+.snipcart-cart__content,
+.snipcart-cart-header,
+.snipcart-featured-payment-methods__title {
+  @apply bg-gray-50;
+}
+
+.snipcart__font--regular,
+.snipcart__font--primary,
+.snipcart__font--secondary,
+.snipcart__font--subtitle {
+  @apply font-sans leading-normal;
+}
+
+.snipcart__font--subtitle {
+  @apply font-semibold text-lg md:text-xl;
+}
+
+.snipcart-cart-button--highlight {
+  background-image: none;
+  @apply bg-blue-600 rounded;
+}
+
+.snipcart__box--badge-highlight {
+  background-image: none;
+  @apply bg-blue-600 text-white font-medium;
+}
+
+.snipcart__actions--link {
+  @apply text-blue-600 font-normal text-sm;
+}
+
+.snipcart-cart-summary-fees__notice {
+  @apply text-sm text-gray-500 my-6;
+}
+
+.snipcart-shipping-rates-list-item--highlight {
+  @apply border-blue-600 bg-white;
+}
+
+.snipcart-form-radio {
+  @apply text-blue-600 border-gray-300 shadow-sm focus:ring-0 p-0;
+}
+
+.snipcart-form-radio + label {
+  @apply text-gray-500 text-sm;
+}
+
+.snipcart-form-radio + label:before {
+  background-image: none;
+  @apply rounded-full w-4 h-4 min-w-0 min-h-0 shadow-sm flex items-center border border-gray-300 cursor-pointer;
+}
+
+.snipcart-form-radio:checked + label:before {
+  background-image: none;
+  @apply bg-blue-600;
+}
+
+.snipcart-form-radio:checked + label:after {
+  @apply hidden;
+}
+
+.snipcart-shipping-rates-list-item__price {
+  @apply text-gray-900 text-sm leading-5;
+}
+
+/* .snipcart-modal,
+.snipcart-cart-header,
+.snipcart-cart__secondary-header,
+.snipcart-modal__container {
+  @apply font-sans;
+}
+
+.snipcart-modal .snipcart-cart-header__close-button {
+  @apply text-gray-500;
+}
+
+.snipcart-form__field {
+  @apply pt-4;
+}
+
+.snipcart-input,
+.snipcart-form__select {
+  @apply w-full rounded-md shadow-sm bg-transparent focus:z-10 sm:text-sm text-gray-900 focus:ring-0 placeholder-gray-400 border-gray-300 focus:border-gray-300;
+}
+
+.snipcart-typeahead--invalid {
+  @apply border-red-500;
+}
+
+.snipcart-error-message--input {
+  @apply text-red-500;
+}
+
+.snipcart-cart-button--highlight {
+  background: none;
+  @apply py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500;
+}
+
+.snipcart__box--badge {
+  @apply border-none bg-gray-50 text-blue-600;
+}
+
+.snipcart__box--badge-highlight {
+  background: none;
+  @apply font-sans bg-blue-600 text-white font-medium ring-offset-2 focus:ring-blue-500 border-none;
+}
+
+.snipcart__box {
+  @apply bg-white;
+} */

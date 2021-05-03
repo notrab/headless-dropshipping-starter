@@ -1,0 +1,29 @@
+{
+  "name": "nextjs-dropshipping-starter",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "author": "Jamie Barton <jamie@notrab.dev> (https://notrab.dev)",
+  "dependencies": {
+    "lodash.shuffle": "4.2.0",
+    "next": "10.2.0",
+    "next-seo": "4.24.0",
+    "printful-request": "1.1.1",
+    "react": "17.0.2",
+    "react-dom": "17.0.2"
+  },
+  "devDependencies": {
+    "@tailwindcss/typography": "0.4.0",
+    "@types/lodash.shuffle": "4.2.6",
+    "@types/node": "15.0.1",
+    "@types/react": "17.0.4",
+    "autoprefixer": "10.2.5",
+    "postcss": "8.2.13",
+    "prettier": "2.2.1",
+    "tailwindcss": "2.1.2",
+    "typescript": "4.2.4"
+  }
+}

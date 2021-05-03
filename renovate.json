@@ -1,0 +1,7 @@
+{
+  "automerge": true,
+  "extends": ["config:base", "schedule:monthly"],
+  "major": {
+    "automerge": false
+  }
+}
