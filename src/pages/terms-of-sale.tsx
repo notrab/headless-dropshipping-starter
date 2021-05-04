@@ -1,6 +1,6 @@
 function TermsPage() {
   return (
-    <div className="max-w-xl mx-auto prose prose-blue">
+    <div className="max-w-2xl mx-auto prose prose-blue">
       <h2>What’s your return policy?</h2>
       <p>
         We don’t offer returns and exchanges, but if there’s something wrong
