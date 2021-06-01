@@ -20,7 +20,7 @@
     "@types/lodash.shuffle": "4.2.6",
     "@types/node": "15.0.1",
     "@types/react": "17.0.8",
-    "autoprefixer": "10.2.5",
+    "autoprefixer": "10.2.6",
     "postcss": "8.2.13",
     "prettier": "2.2.1",
     "tailwindcss": "2.1.2",
