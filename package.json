@@ -9,7 +9,7 @@
   "author": "Jamie Barton <jamie@notrab.dev> (https://notrab.dev)",
   "dependencies": {
     "lodash.shuffle": "4.2.0",
-    "next": "10.2.0",
+    "next": "10.2.3",
     "next-seo": "4.24.0",
     "printful-request": "1.1.1",
     "react": "17.0.2",
