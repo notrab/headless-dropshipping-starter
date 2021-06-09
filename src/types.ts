@@ -19,7 +19,8 @@ export type SnipcartWebhookEvent =
   | "subscription.resumed"
   | "subscription.invoice.created"
   | "shippingrates.fetch"
-  | "taxes.calculate";
+  | "taxes.calculate"
+  | "customauth:customer_updated";
 
 export interface SnipcartWebhookContent {
   discounts: { [key: string]: any };

@@ -5,7 +5,7 @@ import createOrder from "../../../lib/create-order";
 import type { SnipcartRequest, SnipcartWebhookEvent } from "../../../types";
 
 export default async (req: SnipcartRequest, res: NextApiResponse) => {
-  const allowedEvents: SnipcartWebhookEvent[] = ["order.completed"];
+  const allowedEvents: SnipcartWebhookEvent[] = ["order.completed", "customauth:customer_updated"];
 
   console.log(req.headers);
   const token = req.headers["x-snipcart-requesttoken"];
@@ -40,6 +40,10 @@ export default async (req: SnipcartRequest, res: NextApiResponse) => {
       case "order.completed":
         await createOrder(content);
         break;
+      case "customauth:customer_updated":
+        return res
+          .status(200)
+          .json({ message: "Customer updated - no action taken" });
       default:
         throw new Error("No such event handler exists");
     }
