@@ -19,7 +19,7 @@
     "@tailwindcss/typography": "0.4.1",
     "@types/lodash.shuffle": "4.2.6",
     "@types/node": "15.0.1",
-    "@types/react": "17.0.11",
+    "@types/react": "17.0.15",
     "autoprefixer": "10.2.6",
     "postcss": "8.3.5",
     "prettier": "2.3.2",
