@@ -111,6 +111,16 @@ const Layout = ({ children }) => {
             >
               Headless Dropshipping Starter
             </a>
+            , Built by{" "}
+            <a
+              href="https://twitter.com/notrab"
+              title="Follow the creator on Twitter"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ml-0.5 text-gray-800 hover:text-blue-600"
+            >
+              @notrab
+            </a>
           </p>
           <nav className="flex items-center justify-end space-x-3 md:space-x-6">
             <Link href="/about">

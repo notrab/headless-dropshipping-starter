@@ -5,7 +5,7 @@ const url = "https://swag.nextdropshippingstarter.com";
 
 const seo = {
   title,
-  titleTemplate: "%s | Next.js Dropshipping Starter",
+  titleTemplate: "%s | Headless Dropshipping Starter",
   description,
   openGraph: {
     description,
@@ -19,4 +19,4 @@ const seo = {
   },
 };
 
-export { seo as defaultSeo, url as defaultUrl };
+export { seo as defaultSEO, url as defaultUrl };

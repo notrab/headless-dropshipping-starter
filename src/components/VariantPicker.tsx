@@ -1,6 +1,5 @@
 const VariantPicker = ({ variants, ...props }) => {
-  if (variants.length === 0)
-    return <p className="text-sm text-gray-300">One size</p>;
+  if (variants.length === (0 || 1)) return null;
 
   return (
     <select

@@ -1,19 +1,5 @@
 /// <reference types="next" />
-/// <reference types="next/types/global" />
+/// <reference types="next/image-types/global" />
 
-declare module JSX {
-  interface IntrinsicElements {
-    "address-fields": {
-      section: "top" | "bottom";
-      children?: any;
-    };
-    "snipcart-label": {
-      for: string;
-      children?: any;
-    };
-    "snipcart-input": {
-      name: string;
-      children?: any;
-    };
-  }
-}
+// NOTE: This file should not be edited
+// see https://nextjs.org/docs/basic-features/typescript for more information.
