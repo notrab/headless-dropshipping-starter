@@ -3,7 +3,7 @@ function TermsPage() {
     <div className="max-w-xl mx-auto prose prose-blue">
       <h2>Welcome</h2>
       <p>
-        You're viewing the{" "}
+        You&apos;re viewing the{" "}
         <a
           href="https://headlessdropshipping.com/"
           title="Learn more about Headless Dropshipping"

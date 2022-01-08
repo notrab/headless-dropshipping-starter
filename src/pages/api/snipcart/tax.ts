@@ -21,10 +21,10 @@ type Error = {
   errors: { key: string; message: string }[];
 };
 
-export default async (
+export default async function handler(
   req: SnipcartRequest,
   res: NextApiResponse<Data | Error>
-) => {
+) {
   const { eventName, content } = req.body;
 
   if (eventName !== "shippingrates.fetch") return res.status(200).end();
@@ -55,15 +55,8 @@ export default async (
       ],
     });
 
-  const {
-    address1,
-    address2,
-    city,
-    country,
-    province,
-    postalCode,
-    phone,
-  } = shippingAddress;
+  const { address1, address2, city, country, province, postalCode, phone } =
+    shippingAddress;
 
   const recipient = {
     ...(address1 && { address1 }),
@@ -109,4 +102,4 @@ export default async (
       ],
     });
   }
-};
+}

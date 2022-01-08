@@ -4,7 +4,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "lint": "next lint"
   },
   "author": "Jamie Barton <jamie@notrab.dev> (https://notrab.dev)",
   "dependencies": {
@@ -22,6 +23,8 @@
     "@types/node": "17.0.8",
     "@types/react": "17.0.38",
     "autoprefixer": "10.4.1",
+    "eslint": "8.6.0",
+    "eslint-config-next": "12.0.7",
     "postcss": "8.4.5",
     "prettier": "2.3.2",
     "tailwindcss": "3.0.11",

@@ -4,8 +4,14 @@ import createOrder from "../../../lib/create-order";
 
 import type { SnipcartRequest, SnipcartWebhookEvent } from "../../../types";
 
-export default async (req: SnipcartRequest, res: NextApiResponse) => {
-  const allowedEvents: SnipcartWebhookEvent[] = ["order.completed", "customauth:customer_updated"];
+export default async function handler(
+  req: SnipcartRequest,
+  res: NextApiResponse
+) {
+  const allowedEvents: SnipcartWebhookEvent[] = [
+    "order.completed",
+    "customauth:customer_updated",
+  ];
 
   console.log(req.headers);
   const token = req.headers["x-snipcart-requesttoken"];
@@ -53,4 +59,4 @@ export default async (req: SnipcartRequest, res: NextApiResponse) => {
     console.log(err);
     res.status(500).json({ message: "Something went wrong" });
   }
-};
+}

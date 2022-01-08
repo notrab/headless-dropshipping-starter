@@ -12,10 +12,10 @@ type Error = {
   errors: { key: string; message: string }[];
 };
 
-export default async (
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data | Error>
-) => {
+) {
   const { id } = req.query;
 
   try {
@@ -39,4 +39,4 @@ export default async (
       ],
     });
   }
-};
+}
