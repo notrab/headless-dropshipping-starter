@@ -1,5 +1,5 @@
 {
-  "name": "nextjs-dropshipping-starter",
+  "name": "headless-dropshipping-starter",
   "private": true,
   "scripts": {
     "dev": "next dev",
