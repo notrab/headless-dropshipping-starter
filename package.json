@@ -11,7 +11,7 @@
   "dependencies": {
     "classcat": "5.0.3",
     "lodash.shuffle": "4.2.0",
-    "next": "12.0.7",
+    "next": "12.0.9",
     "next-seo": "4.28.1",
     "printful-request": "1.1.1",
     "react": "17.0.2",
