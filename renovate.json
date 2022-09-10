@@ -1,6 +1,6 @@
 {
   "automerge": true,
-  "extends": ["config:base", "schedule:monthly"],
+  "extends": ["config:base", "schedule:monthly", ":disableDependencyDashboard"],
   "major": {
     "automerge": false
   }
