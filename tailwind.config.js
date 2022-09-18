@@ -15,5 +15,5 @@ module.exports = {
       backgroundColor: ["checked"],
     },
   },
-  plugins: [require("@tailwindcss/typography")],
+  plugins: [require("@tailwindcss/typography"), require("@tailwindcss/forms")],
 };
