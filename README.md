@@ -6,7 +6,6 @@
 
 ![Headless Dropshipping](https://user-images.githubusercontent.com/950181/116987157-9f3cdc00-acc6-11eb-97ff-b8134edd4b65.png)
 
-
 ## Features
 
 - Realtime shipping prices
@@ -82,11 +81,11 @@ The defaults should work for most, but you might want to make some adjustments f
 </details>
 
 <details>
-  <summary>Enable API Access</summary>
+  <summary>Create a Printful Private token</summary>
   
-Inside **Settings** > **Stores** > **API**, click to **Enable API Access**.
+Inside **Settings** > **Stores** > **API**, click visit [Printful Developers](https://developers.printful.com/login).
 
-Make sure to copy your `API Key` for use later.
+From here you will want to create a new **Private token**, select the store you want to give this token access to, select the permissions (all), set an expiry and copy the value for use later as `PRINTFUL_API_KEY`.
 
 </details>
 
