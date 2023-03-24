@@ -27,7 +27,7 @@ export default async function handler(
 ) {
   const { eventName, content } = req.body;
 
-  if (eventName !== "shippingrates.fetch") return res.status(200).end();
+  if (eventName !== "taxes.calculate") return res.status(200).end();
 
   if (content.items.length === 0)
     return res.status(200).json({
