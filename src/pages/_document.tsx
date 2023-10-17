@@ -15,6 +15,10 @@ class MyDocument extends Document {
             href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap"
             rel="stylesheet"
           />
+          <link
+            href="/favicon.ico"
+            rel="shortcut icon"
+          />
         </Head>
         <body className="antialiased">
           <Main />
