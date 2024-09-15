@@ -1,4 +1,4 @@
-# [Headless Dropshipping Starter](https://headlessdropshipping.com)
+# [Swag Boilerplate](https://headlessdropshipping.com)
 
 🧦 Build your own Headless eCommerce storefront with [Next.js](https://nextjs.org/) and [Snipcart](https://snipcart.com/), and deliver swag powered by [Printful](https://printful.com/). End to end commerce, styled using [Tailwind CSS](https://tailwindcss.com/) and deployed on [Vercel](https://vercel.com/).
 
