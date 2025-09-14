@@ -94,7 +94,7 @@ From here you will want to create a new **Private token**, select the store you 
   
 You'll want to add a [billing method](https://www.printful.com/dashboard/billing/billing-methods) to Printful so you can fulfill orders.
 
-When a customer makes an order, Printful will charge YOU to process the order. 📺 [Learn more how Printful processes payments for order fulfillment](https://www.youtube.com/watch?v=_5lsHL8wji4&t=2s).
+When a customer makes an order, Printful will charge YOU to process the order. 
 
 </details>
 
