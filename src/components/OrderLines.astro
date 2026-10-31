@@ -1,0 +1,68 @@
+---
+import { formatPrice } from "#utils";
+import type { OrderLine } from "#lib/orders";
+import type { OrderTotals } from "#lib/pricing";
+
+interface Props {
+  lines: OrderLine[];
+  totals: OrderTotals;
+  currency: string;
+}
+
+const { lines, totals, currency } = Astro.props;
+---
+
+<div class="pt-3 pb-5">
+  <ul class="space-y-3">
+    {lines.map((line) => (
+      <li class="flex items-center gap-3.5">
+        <div class="relative">
+          <div class="size-[52px] bg-gray-200 overflow-hidden border border-transparent group-data-[theme=round]/body:rounded-md group-data-[theme=brutalist]/body:border-primary">
+            <img src={line.image} alt={line.name} class="size-full object-contain" />
+          </div>
+          <div class="absolute -top-2 -right-2 flex items-center justify-center size-5 rounded-full bg-gray-400 text-xs text-gray-50">{line.quantity}</div>
+        </div>
+        <div class="flex flex-col gap-1 flex-1">
+          <div class="flex items-center justify-between gap-0.5">
+            <span class="block flex-1 text-sm font-medium truncate">{line.name}</span>
+            <span class="block text-sm font-medium truncate">{formatPrice(line.price * line.quantity, currency)}</span>
+          </div>
+          <div class="flex items-center justify-between gap-0.5">
+            {line.variant && (
+              <span class="block flex-1 text-gray-500 text-sm truncate">{line.variant}</span>
+            )}
+            <span class="block text-sm text-gray-500 truncate">{formatPrice(line.price, currency)} each</span>
+          </div>
+        </div>
+      </li>
+    ))}
+  </ul>
+
+  <hr class="my-4 md:my-6 border-gray-200" />
+
+  <div class="space-y-4 md:space-y-6">
+    <div class="flex items-center">
+      <div class="flex-1 text-sm font-medium text-gray-500">Subtotal</div>
+      <div class="text-sm font-semibold">{formatPrice(totals.subtotal, currency)}</div>
+    </div>
+
+    <div class="flex items-center">
+      <div class="flex-1 text-sm font-medium text-gray-500">Shipping</div>
+      <div class="text-sm font-semibold">{formatPrice(totals.shipping, currency)}</div>
+    </div>
+
+    {totals.vat > 0 && (
+      <div class="flex items-center">
+        <div class="flex-1 text-sm font-medium text-gray-500">VAT</div>
+        <div class="text-sm font-semibold">{formatPrice(totals.vat, currency)}</div>
+      </div>
+    )}
+  </div>
+
+  <hr class="my-4 md:my-6 border-gray-200" />
+
+  <div class="flex items-center">
+    <div class="flex-1 text-sm font-medium text-gray-900">Total</div>
+    <div class="font-bold text-lg">{formatPrice(totals.total, currency)}</div>
+  </div>
+</div>

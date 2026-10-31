@@ -1,0 +1,49 @@
+---
+/**
+ * Everything in <head>: title, description, and the Open Graph / Twitter tags
+ * that link previews (Slack, iMessage, X...) are built from.
+ */
+import { Font } from "astro:assets";
+import { STORE_NAME } from "astro:env/client";
+
+export interface SeoImage {
+  /** Absolute URL, or a path on this site */
+  src: string;
+  alt?: string;
+}
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: SeoImage;
+}
+
+const { title, description, image } = Astro.props;
+const fullTitle = title ? `${title} | ${STORE_NAME}` : STORE_NAME;
+
+// Link previews need absolute URLs, which needs `site` (see astro.config.mjs)
+const absolute = (path: string) =>
+  URL.canParse(path) ? path : Astro.site ? new URL(path, Astro.site).href : undefined;
+const pageUrl = absolute(Astro.url.pathname);
+const imageUrl = image && absolute(image.src);
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width" />
+<meta name="generator" content={Astro.generator} />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+<title>{fullTitle}</title>
+{description && <meta name="description" content={description} />}
+{pageUrl && <link rel="canonical" href={pageUrl} />}
+
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content={STORE_NAME} />
+<meta property="og:title" content={title ?? STORE_NAME} />
+{description && <meta property="og:description" content={description} />}
+{pageUrl && <meta property="og:url" content={pageUrl} />}
+{imageUrl && <meta property="og:image" content={imageUrl} />}
+{imageUrl && image?.alt && <meta property="og:image:alt" content={image.alt} />}
+<meta name="twitter:card" content={imageUrl ? "summary_large_image" : "summary"} />
+
+<Font cssVariable="--font-inter" preload />

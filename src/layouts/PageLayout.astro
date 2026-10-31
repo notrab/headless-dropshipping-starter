@@ -1,0 +1,15 @@
+---
+import RootLayout from "./RootLayout.astro";
+import Header from "#components/Header.astro";
+import Footer from "#components/Footer.astro";
+
+import type { Props as RootLayoutProps } from "./RootLayout.astro";
+
+type Props = RootLayoutProps;
+---
+
+<RootLayout {...Astro.props}>
+    <Header />
+    <slot />
+    <Footer />
+</RootLayout>

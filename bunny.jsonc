@@ -1,0 +1,35 @@
+// bunny.net Magic Containers config for `bunny apps deploy`.
+//
+// Each env value names a variable in your local .env; the CLI fills in the
+// value when you deploy, so no secrets live in this file. Add PRINTFUL_STORE_ID
+// or SITE_URL here too if you set them in .env.
+{
+  "version": "2026-05-11",
+  "app": {
+    "name": "swag-store",
+    "scaling": {
+      "min": 1,
+      "max": 1
+    },
+    "regions": ["AMS"],
+    "containers": {
+      "app": {
+        "dockerfile": "Dockerfile",
+        "endpoints": [
+          {
+            "type": "cdn",
+            "ssl": true,
+            "ports": [{ "public": 443, "container": 4321 }]
+          }
+        ],
+        "env": {
+          "PRINTFUL_API_TOKEN": "PRINTFUL_API_TOKEN",
+          "STRIPE_SECRET_KEY": "STRIPE_SECRET_KEY",
+          "STRIPE_WEBHOOK_SECRET": "STRIPE_WEBHOOK_SECRET",
+          "PUBLIC_STRIPE_PUBLISHABLE_KEY": "PUBLIC_STRIPE_PUBLISHABLE_KEY",
+          "PASS_THROUGH_VAT": "PASS_THROUGH_VAT"
+        }
+      }
+    }
+  }
+}

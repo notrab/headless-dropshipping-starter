@@ -1,0 +1,72 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+@plugin "@tailwindcss/forms" {
+    strategy: "class";
+}
+
+@theme inline {
+    --font-sans: var(--font-inter);
+}
+
+:root {
+    --background: #fff;
+    --border: #ccc;
+    --primary: #000;
+}
+
+@theme {
+    --color-primary: #212529;
+    --breakpoint-2xl: initial;
+}
+
+@utility container {
+    margin-inline: auto;
+    padding-inline: 1rem;
+}
+
+/* Hide Alpine-driven elements until Alpine initialises and removes the attribute */
+[x-cloak] {
+    display: none !important;
+}
+
+/** Product Carousel **/
+.splide__arrow {
+    -ms-flex-align: center;
+    align-items: center;
+    border: 0;
+    border-radius: 50%;
+    cursor: pointer;
+    height: 2em;
+    -ms-flex-pack: center;
+    justify-content: center;
+    opacity: 1;
+    padding: 0;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2em;
+    z-index: 1;
+    @apply bg-gray-200 hover:bg-gray-300 duration-200 flex;
+}
+
+.splide__arrow--prev {
+    left: 0.5em;
+}
+.splide__arrow--next {
+    right: 0.5em;
+}
+
+.splide__arrow--prev svg {
+    transform: scaleX(-1);
+}
+.splide__arrow svg {
+    height: 1.2em;
+    width: 1.2em;
+    stroke-width: 3px;
+    stroke: #000;
+    fill: transparent;
+}
+
+.splide__arrow:disabled {
+    opacity: 0;
+}

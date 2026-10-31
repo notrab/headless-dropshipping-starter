@@ -1,0 +1,51 @@
+---
+import PageLayout from "#layouts/PageLayout.astro";
+import Button from "#components/Button.astro";
+import CartLine from "#components/CartLine.astro";
+---
+
+<PageLayout title="Cart">
+  <main class="container pb-8 lg:pt-8" x-init="$store.cart.checkAvailability()">
+    <h1 class="text-2xl lg:text-[32px] font-semibold mb-6">Your cart</h1>
+
+    <template x-if="$store.cart.isEmpty">
+      <div class="py-12 text-center text-gray-500 space-y-4">
+        <p>Your cart is empty</p>
+        <a href="/" class="inline-block text-sm underline">Continue shopping</a>
+      </div>
+    </template>
+
+    <template x-if="!$store.cart.isEmpty">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+        <p
+          x-show="$store.cart.unavailableMessage"
+          x-text="$store.cart.unavailableMessage"
+          role="alert"
+          class="lg:col-span-3 p-4 text-sm bg-red-50 text-red-700 border border-red-200 group-data-[theme=round]/body:rounded-2xl"
+        ></p>
+        <ul class="lg:col-span-2 divide-y divide-gray-200 border-y border-gray-200 [&>li]:py-5">
+          <template x-for="item in $store.cart.items" x-bind:key="item.id">
+            <CartLine editable />
+          </template>
+        </ul>
+
+        <aside class="space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="font-medium">Subtotal</span>
+            <span
+              class="font-bold text-lg"
+              x-text="formatPrice($store.cart.cartTotal, $store.cart.currency)"
+            ></span>
+          </div>
+          <p class="text-sm text-gray-500">Shipping and taxes are calculated at checkout.</p>
+          <Button
+            href="/checkout"
+            class="w-full"
+            x-bind:aria-disabled="Boolean($store.cart.unavailableMessage)"
+            x-bind:class="$store.cart.unavailableMessage && 'opacity-50 pointer-events-none'"
+          >Continue to checkout</Button>
+        </aside>
+      </div>
+    </template>
+  </main>
+</PageLayout>

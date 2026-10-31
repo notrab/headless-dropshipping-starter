@@ -1,0 +1,54 @@
+---
+import { getCollection, getEntry } from "astro:content";
+import {
+  PRINTFUL_API_TOKEN,
+  PRINTFUL_STORE_ID,
+  STRIPE_SECRET_KEY,
+  STRIPE_WEBHOOK_SECRET,
+} from "astro:env/server";
+import { PUBLIC_STRIPE_PUBLISHABLE_KEY, STORE_NAME } from "astro:env/client";
+import PageLayout from "#layouts/PageLayout.astro";
+import HomeHero from "#components/HomeHero.astro";
+import ProductGrid from "#components/ProductGrid.astro";
+import SetupGuide from "#components/SetupGuide.astro";
+import { paginate, PRODUCTS_PER_PAGE } from "#lib/catalog";
+import { checkSetup } from "#lib/setup";
+
+// The catalog only changes on rebuild, so the storefront is built ahead of time
+export const prerender = true;
+
+const products = paginate(await getCollection("products"), 1, PRODUCTS_PER_PAGE);
+const isEmpty = products.items.length === 0;
+
+// Optional heading and intro from src/content/home.md
+const home = await getEntry("home", "home");
+
+// No products: in dev, explain what's missing; in production, stay vague
+const setupChecks =
+  isEmpty && import.meta.env.DEV
+    ? await checkSetup({
+        PRINTFUL_API_TOKEN,
+        PRINTFUL_STORE_ID,
+        STRIPE_SECRET_KEY,
+        PUBLIC_STRIPE_PUBLISHABLE_KEY,
+        STRIPE_WEBHOOK_SECRET,
+      })
+    : undefined;
+---
+
+<PageLayout title={home?.data.title} description={home?.data.description}>
+  {
+    !isEmpty ? (
+      <ProductGrid products={products}>
+        {home && <HomeHero entry={home} />}
+      </ProductGrid>
+    ) : setupChecks ? (
+      <SetupGuide checks={setupChecks} />
+    ) : (
+      <main class="container py-24 text-center space-y-2">
+        <h1 class="text-2xl font-semibold">{STORE_NAME} is opening soon</h1>
+        <p class="text-gray-600">Check back shortly.</p>
+      </main>
+    )
+  }
+</PageLayout>

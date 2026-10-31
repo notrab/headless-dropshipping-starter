@@ -1,0 +1,104 @@
+---
+import type { CollectionEntry } from "astro:content";
+import Button from "./Button.astro";
+import { formatPrice } from "#utils";
+import { getProductVariants, toCartItem } from "#lib/catalog";
+
+interface Props {
+    product: CollectionEntry<"products">;
+    infoOnly?: boolean;
+    /** Load the image straight away (cards in the first row); others load as they scroll into view */
+    eager?: boolean;
+}
+
+const { product, infoOnly = false, eager = false } = Astro.props;
+const { id, name } = product.data;
+
+// Everything the browser needs per variant: what to show and what to add to the cart
+const options = (await getProductVariants(id)).map((variant) => {
+    const item = toCartItem(variant, name);
+    return { item, label: variant.name, price: formatPrice(item.price, item.currency) };
+});
+
+const [first] = options;
+const image = first?.item.image ?? product.data.thumbnail_url;
+---
+
+<article data-product-card data-options={JSON.stringify(options)}>
+    <a
+        href={`/products/${product.id}`}
+        class="block relative aspect-square bg-gray-200 border border-transparent group-data-[theme=round]/body:rounded-2xl group-data-[theme=brutalist]/body:border-primary"
+    >
+        {
+            image ? (
+                <img
+                    data-image
+                    src={image}
+                    alt={name}
+                    loading={eager ? "eager" : "lazy"}
+                    decoding="async"
+                    class="w-full h-full object-cover p-8"
+                />
+            ) : (
+                <div class="w-full h-full flex items-center justify-center text-gray-400">
+                    No Image
+                </div>
+            )
+        }
+    </a>
+
+    <div class="pt-4">
+        <h3 class="font-medium text-sm mb-2">{name}</h3>
+
+        <div class="mb-2">
+            <span class="font-semibold text-lg" data-price>
+                {first ? first.price : "Unavailable"}
+            </span>
+        </div>
+        {
+            !infoOnly && first && (
+                <div class="flex flex-col sm:flex-row gap-3 mt-3">
+                    {options.length > 1 && (
+                        <select
+                            data-variant-picker
+                            aria-label={`${name} option`}
+                            class="form-select appearance-none w-full flex-grow text-xs border border-gray-300 text-gray-500 px-3 py-2 cursor-pointer bg-white focus:border-gray-500 focus:outline-none focus:text-gray-900 group-data-[theme=round]/body:rounded-full group-data-[theme=brutalist]/body:border-primary"
+                        >
+                            {options.map((option, index) => (
+                                <option value={index}>{option.label}</option>
+                            ))}
+                        </select>
+                    )}
+                    <Button
+                        data-add-to-cart
+                        class={options.length > 1 ? "w-full sm:w-auto flex-shrink-0" : "w-full"}
+                    >Add to cart</Button>
+                </div>
+            )
+        }
+    </div>
+</article>
+
+<script>
+    import type { CartItem } from "#stores/cartStore";
+
+    type Option = { item: Omit<CartItem, "quantity">; label: string; price: string };
+
+    document.querySelectorAll<HTMLElement>("[data-product-card]").forEach((card) => {
+        const options: Option[] = JSON.parse(card.dataset.options ?? "[]");
+        const picker = card.querySelector<HTMLSelectElement>("[data-variant-picker]");
+        const price = card.querySelector<HTMLElement>("[data-price]");
+        const image = card.querySelector<HTMLImageElement>("[data-image]");
+        const selected = () => options[Number(picker?.value ?? 0)];
+
+        picker?.addEventListener("change", () => {
+            const { item, price: formatted } = selected();
+            if (price) price.textContent = formatted;
+            if (image) image.src = item.image;
+        });
+
+        card.querySelector("[data-add-to-cart]")?.addEventListener("click", () => {
+            window.Alpine.store("cart").addItem(selected().item);
+        });
+    });
+</script>

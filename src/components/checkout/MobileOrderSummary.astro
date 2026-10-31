@@ -1,0 +1,88 @@
+---
+/**
+ * On small screens the full order summary sits below the form. Once it
+ * scrolls out of view, this bar slides in with the total, and can expand to
+ * show the summary.
+ */
+import CartSummary from "../CartSummary.astro";
+
+interface Props {
+  /** id of the full order summary; the bar shows while it's out of view */
+  watch: string;
+}
+
+const { watch } = Astro.props;
+---
+
+<div data-mobile-order-summary data-watch={watch} class="md:hidden">
+  <div
+    data-backdrop
+    class="fixed inset-0 z-40 bg-black/50 opacity-0 pointer-events-none transition-opacity duration-300"
+  ></div>
+
+  <div
+    data-bar
+    class="fixed top-0 inset-x-0 z-50 bg-gray-50 border-b border-gray-200 -translate-y-full transition-transform duration-300 ease-in-out overflow-hidden data-[open]:border-transparent data-[open]:group-data-[theme=round]/body:rounded-b-3xl"
+  >
+    <div class="flex items-center px-6 h-[72px]">
+      <div class="flex-1">
+        <div class="text-sm font-medium text-gray-900">Total due</div>
+        <div class="flex items-center gap-2">
+          <div class="font-bold text-lg" x-text="formatPrice($store.checkout.orderTotal, $store.cart.currency)"></div>
+          <template x-if="!$store.checkout.selectedShippingMethod">
+            <div class="text-xs text-gray-500">+ Shipping</div>
+          </template>
+        </div>
+      </div>
+      <button
+        type="button"
+        data-toggle
+        aria-expanded="false"
+        aria-controls="mobile-order-details"
+        class="px-4 h-[44px] flex items-center gap-2 cursor-pointer border border-gray-300 group-data-[theme=brutalist]/body:border-primary group-data-[theme=round]/body:rounded-full"
+      >
+        <span data-label class="text-sm text-primary">More details</span>
+        <svg data-chevron class="size-6 -mr-2 transition-transform duration-200" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M7.47 9.74 12 14.26l4.53-4.52" stroke="#101010" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </button>
+    </div>
+
+    <div id="mobile-order-details" data-details class="max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+      <div class="px-6 bg-gray-50">
+        <CartSummary />
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const root = document.querySelector<HTMLElement>("[data-mobile-order-summary]");
+  const watched = root && document.getElementById(root.dataset.watch ?? "");
+
+  if (root && watched) {
+    const part = (name: string) => root.querySelector<HTMLElement>(`[data-${name}]`)!;
+    const [bar, backdrop, toggle, label, chevron, details] = [
+      "bar", "backdrop", "toggle", "label", "chevron", "details",
+    ].map(part);
+
+    function setOpen(open: boolean) {
+      details.style.maxHeight = open ? `${details.scrollHeight}px` : "0px";
+      bar.toggleAttribute("data-open", open);
+      backdrop.classList.toggle("opacity-0", !open);
+      backdrop.classList.toggle("pointer-events-none", !open);
+      chevron.classList.toggle("rotate-180", open);
+      toggle.setAttribute("aria-expanded", String(open));
+      label.textContent = open ? "Close" : "More details";
+    }
+
+    toggle.addEventListener("click", () => setOpen(!bar.hasAttribute("data-open")));
+    backdrop.addEventListener("click", () => setOpen(false));
+
+    // Slide the bar in once the full summary has scrolled out of view
+    new IntersectionObserver(([entry]) => {
+      bar.classList.toggle("-translate-y-full", entry.isIntersecting);
+      if (entry.isIntersecting) setOpen(false);
+    }).observe(watched);
+  }
+</script>

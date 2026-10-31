@@ -1,0 +1,59 @@
+---
+import type { DisplayAddress, OrderSummary } from "#lib/orders";
+import { isPaid } from "#lib/order-status";
+
+interface Props {
+  summary: OrderSummary;
+}
+
+const { summary } = Astro.props;
+const { shippingAddress, billingAddress, card, email, order, payment } = summary;
+
+const brand = card && card.brand.charAt(0).toUpperCase() + card.brand.slice(1);
+const paymentMethod = !isPaid(payment.status)
+  ? "Not paid yet"
+  : card
+    ? `${brand} ending with ${card.last4}`
+    : "Card payment";
+
+const addresses: [string, DisplayAddress | null][] = [
+  ["Shipping address", shippingAddress],
+  ["Billing address", billingAddress],
+];
+---
+
+<div class="md:pt-8 border-t border-transparent md:border-gray-200">
+  <h2 class="text-lg/[1.25] font-semibold mb-5">Customer information</h2>
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+    {addresses.map(([title, address]) => address && (
+      <div>
+        <h3 class="text-sm font-semibold mb-2.5">{title}</h3>
+        <address class="not-italic text-sm/[1.75] text-gray-500">
+          {address.name}
+          {address.lines.map((line) => <><br />{line}</>)}
+        </address>
+      </div>
+    ))}
+
+    <div>
+      <h3 class="text-sm font-semibold mb-2.5">Payment method</h3>
+      <div class="text-sm text-gray-500">
+        {paymentMethod}
+      </div>
+    </div>
+
+    {order.shipping_service_name && (
+      <div>
+        <h3 class="text-sm font-semibold mb-2.5">Shipping method</h3>
+        <div class="text-sm text-gray-500">{order.shipping_service_name}</div>
+      </div>
+    )}
+
+    {email && (
+      <div>
+        <h3 class="text-sm font-semibold mb-2.5">Contact information</h3>
+        <div class="text-sm text-gray-500">{email}</div>
+      </div>
+    )}
+  </div>
+</div>

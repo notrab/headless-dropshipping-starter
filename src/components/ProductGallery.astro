@@ -1,0 +1,87 @@
+---
+
+interface Props {
+  product: { name: string; gallery: string[] };
+}
+
+const { product } = Astro.props;
+const { name, gallery } = product;
+---
+{
+    gallery && gallery.length > 0 ? (
+      <div class="space-y-5">
+        {/** Main Carousel */ }
+        <div id="main-carousel" class="splide relative aspect-square bg-gray-200 border border-transparent group-data-[theme=round]/body:rounded-2xl group-data-[theme=brutalist]/body:border-primary overflow-hidden">
+          <div class="splide__track h-full">
+            <ul class="splide__list h-full">
+              {gallery.map((image, index) => (
+                <li class="splide__slide h-full group">
+                  <img src={image} alt={`${name} - Image ${index + 1}`} class="size-full object-cover p-12" />
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/** Thumbnail Pagination */ }
+        <div id="thumbnail-carousel" class="splide">
+          <div class="splide__track">
+            <ul class="splide__list">
+              {gallery.map((image, index) => (
+                <li class="splide__slide group">
+                  <img src={image} alt={`${name} thumbnail ${index + 1}`} class="size-full p-3 object-contain group-data-[theme=round]/body:rounded-xl border border-gray-200 cursor-pointer hover:border-gray-300 transition-colors group-aria-[current=true]:border-black hover:group-aria-[current=true]:border-black" />
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+    ) : (
+      <div class="relative aspect-square bg-gray-200 border border-transparent group-data-[theme=round]/body:rounded-full group-data-[theme=brutalist]/body:border-primary">
+        <div class="w-full h-full flex items-center justify-center text-gray-400">No Image</div>
+      </div>
+    )
+  }
+
+  <script>
+    import { Splide } from '@splidejs/splide';
+  
+    document.addEventListener('DOMContentLoaded', () => {
+      const mainCarousel = document.getElementById('main-carousel');
+      const thumbnailCarousel = document.getElementById('thumbnail-carousel');
+      
+      if (mainCarousel && thumbnailCarousel) {
+        // Initialize main carousel
+        const main = new Splide('#main-carousel', {
+          type: "slide",
+          pagination: false,
+          arrows: false
+        });
+  
+        // Initialize thumbnail carousel
+        const thumbnails = new Splide('#thumbnail-carousel', {
+          perPage: 6.5,
+          gap: 12,
+          rewind: false,
+          pagination: false,
+          arrows: true,
+          arrowPath: "M24.0508 9.8833L34.1674 20L24.0508 30.1166M5.83398 20H33.884",
+          isNavigation: true,
+          breakpoints: {
+            640: {
+              gap: 6,
+              perPage: 5.5,
+            },
+          },
+        });
+  
+        // Sync the carousels
+        main.sync(thumbnails);
+        
+        // Mount both carousels
+        main.mount();
+        thumbnails.mount();
+      }
+    });
+  </script>
+  

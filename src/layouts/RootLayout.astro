@@ -1,0 +1,22 @@
+---
+import "../styles/global.css";
+import Head, { type SeoImage } from "#components/Head.astro";
+import { THEME } from "astro:env/client";
+
+export interface Props {
+    title?: string;
+    /** For search results and link previews */
+    description?: string;
+    /** Link preview image */
+    image?: SeoImage;
+}
+---
+
+<html lang="en" class="antialiased h-full">
+    <head>
+        <Head {...Astro.props} />
+    </head>
+    <body class="group/body h-full" data-theme={THEME} x-data>
+        <slot />
+    </body>
+</html>

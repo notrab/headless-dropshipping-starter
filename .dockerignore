@@ -1,0 +1,10 @@
+# The build stage reads keys from .env (or a build secret) and the pushed image
+# only gets dist/, so .env may come in. Other env files and local output stay out.
+.env.*
+node_modules
+dist
+.astro
+.vercel
+.netlify
+.git
+tests

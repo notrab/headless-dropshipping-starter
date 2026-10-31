@@ -1,0 +1,57 @@
+---
+/**
+ * A − / quantity / + control driven by Alpine. Callers pass Alpine
+ * expressions, so the same control works for a cart line
+ * (`$store.cart.updateItemQuantity(...)`) or a form (`quantity = ...`).
+ *
+ * The icons are inline SVG rather than astro-icon: astro-icon defines each
+ * icon once per page and references it after, and that first definition can
+ * land inside an Alpine <template>, where it doesn't exist in the page.
+ */
+import { cn } from "#utils";
+
+interface Props {
+  /** Alpine expression for the number shown, e.g. "item.quantity" */
+  value: string;
+  /** Alpine statements to run on − and + */
+  decrease: string;
+  increase: string;
+  /** When set, also submits the value as a form field with this name */
+  name?: string;
+  class?: string;
+}
+
+const { value, decrease, increase, name, class: className } = Astro.props;
+const buttonClass =
+  "flex items-center justify-center w-8 h-full cursor-pointer focus:outline-none focus:bg-gray-100 hover:bg-gray-100";
+---
+
+<div
+  class={cn(
+    "inline-flex items-center border border-gray-300 overflow-hidden h-[36px] w-[94px] focus-within:ring-2 focus-within:ring-blue-500 group-data-[theme=round]/body:rounded-full group-data-[theme=brutalist]/body:border-primary",
+    className,
+  )}
+>
+  <button
+    type="button"
+    aria-label="Decrease quantity"
+    class={cn(buttonClass, "group-data-[theme=round]/body:pl-1")}
+    x-on:click={decrease}
+  >
+    <svg class="size-5" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path d="M5 10h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+    </svg>
+  </button>
+  <span class="min-w-7 flex-1 text-center text-sm" aria-live="polite" x-text={value}></span>
+  {name && <input type="hidden" name={name} x-bind:value={value} />}
+  <button
+    type="button"
+    aria-label="Increase quantity"
+    class={cn(buttonClass, "group-data-[theme=round]/body:pr-1")}
+    x-on:click={increase}
+  >
+    <svg class="size-5" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+      <path d="M5 10h10m-5 5V5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+    </svg>
+  </button>
+</div>

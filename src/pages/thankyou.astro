@@ -1,0 +1,86 @@
+---
+import Logo from "#components/Logo.astro";
+import RootLayout from "#layouts/RootLayout.astro";
+import OrderLines from "#components/OrderLines.astro";
+import CustomerInformation from "#components/CustomerInformation.astro";
+import OrderHelp from "#components/OrderHelp.astro";
+import { StoreError } from "#lib/errors";
+import { getOrderSummary, type OrderSummary } from "#lib/orders";
+
+// Checkout sends customers here after paying, and Stripe does the same after
+// redirect-based payment methods, appending ?payment_intent=pi_...
+const paymentIntentId = Astro.url.searchParams.get("payment_intent");
+if (!paymentIntentId) {
+  return Astro.redirect("/");
+}
+
+let summary: OrderSummary;
+try {
+  summary = await getOrderSummary(paymentIntentId);
+} catch (error) {
+  // Printful rate limiting: say so (the payment went through) rather than
+  // sending a customer who's just paid back to the homepage
+  if (error instanceof StoreError && error.code === "PRINTFUL_BUSY") {
+    return Astro.rewrite("/busy?after=payment");
+  }
+  console.error("Failed to load order for thank you page:", error);
+  return Astro.redirect("/");
+}
+
+// A failed or abandoned redirect payment comes back here too; the order page
+// explains what happened and lets the customer pay again
+if (summary.payment.status !== "paid" && summary.payment.status !== "processing") {
+  return Astro.redirect(`/order/${paymentIntentId}`);
+}
+
+const { order, lines, totals, currency, email, shippingAddress } = summary;
+const firstName = shippingAddress.name.split(" ")[0] || "Friend";
+---
+
+<RootLayout title="Thank you">
+  <!-- The order is placed, so clear the cart (this also covers redirect payments) -->
+  <div hidden x-init="$store.cart.emptyCart()"></div>
+  <section class="flex flex-wrap md:flex-row h-full">
+    <div class="w-full md:w-1/2 bg-white py-8 px-6 lg:px-16 overflow-y-auto">
+      <div class="lg:max-w-[560px] ml-auto">
+        <div class="mb-10"><Logo /></div>
+        <div class="flex flex-col gap-y-6 lg:gap-y-8">
+          <div class="flex items-center gap-8">
+            <div class="size-16 text-[64px]/[1]">🎉</div>
+            <div class="flex flex-col gap-1">
+              <h1 class="text-2xl font-semibold">Thank you, {firstName}</h1>
+              <span class="inline-block text-gray-500 text-sm">Order #{order.id}</span>
+            </div>
+          </div>
+
+          <div>
+            <h2 class="text-lg/[1.25] font-semibold mb-3">Your order is confirmed</h2>
+            <p class="text-sm/[1.75] text-gray-600">
+              We've accepted your order and we're getting it ready.
+              {email && (
+                <>A confirmation email has been sent to <span class="font-semibold text-gray-900">{email}</span>.</>
+              )}
+              You can <a href={`/order/${paymentIntentId}`} class="font-medium text-gray-900 underline underline-offset-4">track your order status</a> at any time.
+            </p>
+          </div>
+
+          <div class="block md:hidden bg-gray-50 -mx-6 p-6">
+            <h3 class="font-semibold text-lg mb-2">Order information</h3>
+            <OrderLines lines={lines} totals={totals} currency={currency} />
+          </div>
+
+          <CustomerInformation summary={summary} />
+
+          <OrderHelp />
+        </div>
+      </div>
+    </div>
+
+    <div class="hidden md:block w-full md:w-1/2 bg-gray-50 pt-8 lg:pt-20 px-6 lg:px-16">
+      <div class="md:sticky md:top-6 lg:max-w-[400px] mr-auto">
+        <h3 class="font-semibold text-lg mb-2">Your order</h3>
+        <OrderLines lines={lines} totals={totals} currency={currency} />
+      </div>
+    </div>
+  </section>
+</RootLayout>

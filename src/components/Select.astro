@@ -1,0 +1,62 @@
+---
+export interface Props {
+  name: string;
+  id?: string;
+  label?: string;
+  required?: boolean;
+  disabled?: boolean;
+  value?: string;
+  class?: string;
+  error?: string;
+  placeholder?: string;
+  options: Array<{ value: string; label: string }> | string[];
+}
+
+const {
+  name,
+  id = name,
+  label,
+  required = false,
+  disabled = false,
+  value,
+  class: className = '',
+  error,
+  placeholder = 'Select an option',
+  options,
+} = Astro.props;
+
+// Convert string array to object array for consistency
+const normalizedOptions = options.map(option => 
+  typeof option === 'string' 
+    ? { value: option, label: option }
+    : option
+);
+---
+
+<div class="space-y-2">
+  {label && (
+    <label for={id} class="block text-sm font-medium text-gray-500">
+      {label}
+      {required && <span class="text-red-500">*</span>}
+    </label>
+  )}
+  <select
+    name={name}
+    id={id}
+    required={required}
+    disabled={disabled}
+    class={`form-select w-full h-[40px] text-sm border ${error ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'} text-gray-700 px-3.5 py-1 cursor-pointer bg-white focus:outline-none focus:ring-1 disabled:bg-gray-100 disabled:cursor-not-allowed group-data-[theme=round]/body:rounded-full group-data-[theme=round]/body:px-4 group-data-[theme=brutalist]/body:border-primary ${className}`}
+  >
+    <option value="">{placeholder}</option>
+    {normalizedOptions.map((option) => (
+      <option value={option.value} selected={value === option.value}>
+        {option.label}
+      </option>
+    ))}
+  </select>
+  {error && (
+    <p class="text-sm text-red-600 mt-1">
+      {error}
+    </p>
+  )}
+</div> 

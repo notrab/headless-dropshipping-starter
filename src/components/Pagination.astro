@@ -1,0 +1,43 @@
+---
+/** Previous / numbered / next links between storefront pages */
+import { pageHref } from "#lib/catalog";
+
+interface Props {
+  page: number;
+  lastPage: number;
+}
+
+const { page, lastPage } = Astro.props;
+const pages = Array.from({ length: lastPage }, (_, i) => i + 1);
+
+const linkClass =
+  "flex items-center justify-center min-w-10 h-10 px-3 text-sm border border-gray-300 hover:bg-gray-50 group-data-[theme=round]/body:rounded-full group-data-[theme=brutalist]/body:border-primary";
+---
+
+{
+  lastPage > 1 && (
+    <nav aria-label="Product pages" class="flex items-center justify-center gap-2 mt-10">
+      {page > 1 && (
+        <a href={pageHref(page - 1)} rel="prev" class={linkClass}>
+          Previous
+        </a>
+      )}
+      {pages.map((n) =>
+        n === page ? (
+          <span aria-current="page" class={`${linkClass} bg-primary text-white border-primary hover:bg-primary`}>
+            {n}
+          </span>
+        ) : (
+          <a href={pageHref(n)} class={linkClass}>
+            {n}
+          </a>
+        ),
+      )}
+      {page < lastPage && (
+        <a href={pageHref(page + 1)} rel="next" class={linkClass}>
+          Next
+        </a>
+      )}
+    </nav>
+  )
+}

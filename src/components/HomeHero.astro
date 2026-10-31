@@ -1,0 +1,16 @@
+---
+/** The homepage heading and intro, from src/content/home.md */
+import { render, type CollectionEntry } from "astro:content";
+
+interface Props {
+  entry: CollectionEntry<"home">;
+}
+
+const { Content } = await render(Astro.props.entry);
+---
+
+<header
+  class="max-w-2xl mx-auto py-12 lg:py-20 text-center text-gray-500 [&_h1]:text-4xl md:[&_h1]:text-5xl [&_h1]:font-semibold [&_h1]:tracking-tight [&_h1]:text-balance [&_strong]:font-semibold [&_strong]:text-gray-900 [&_p]:mt-5 [&_p]:text-lg [&_p]:text-pretty"
+>
+  <Content />
+</header>

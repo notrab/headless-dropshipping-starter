@@ -1,0 +1,42 @@
+---
+/** The cart popover opened from the header's cart button */
+import Button from "./Button.astro";
+import CartLine from "./CartLine.astro";
+---
+
+<div
+  id="cart-summary"
+  popover
+  class="w-full sm:w-[375px] bg-transparent"
+  style="position-anchor: --cart-button; position-area: bottom left; margin-block-start: 14px; margin-inline-end: -20px;"
+>
+  <div class="px-5 bg-white border border-gray-300 group-data-[theme=round]/body:rounded-2xl group-data-[theme=brutalist]/body:border-primary">
+    <div class="flex items-center justify-between pt-3.5">
+      <h2 class="font-semibold text-lg">Cart Summary</h2>
+      <a href="/cart" class="block text-sm underline">View full cart</a>
+    </div>
+
+    <template x-if="$store.cart.isEmpty">
+      <p class="py-8 text-center text-gray-500">Your cart is empty</p>
+    </template>
+
+    <template x-if="!$store.cart.isEmpty">
+      <div>
+        <ul class="py-3 space-y-4">
+          <template x-for="item in $store.cart.items" x-bind:key="item.id">
+            <CartLine editable />
+          </template>
+        </ul>
+        <hr class="-mx-5 w-[calc(100%+2.5rem)] border-gray-300" />
+        <div class="flex items-center justify-between pt-3">
+          <span class="block font-medium text-sm">Subtotal</span>
+          <span class="block font-bold text-lg" x-text="formatPrice($store.cart.cartTotal, $store.cart.currency)"></span>
+        </div>
+        <div class="pt-3 pb-5">
+          <Button href="/checkout" class="w-full">Continue to checkout</Button>
+          <p class="text-sm text-gray-500 mt-2.5">Shipping and taxes will be calculated at checkout</p>
+        </div>
+      </div>
+    </template>
+  </div>
+</div>

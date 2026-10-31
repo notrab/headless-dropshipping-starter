@@ -1,0 +1,75 @@
+---
+/**
+ * One cart item. Use inside `<template x-for="item in $store.cart.items">`:
+ * it reads `item` from the Alpine scope.
+ *
+ * - editable: quantity stepper and Remove (cart page, cart popover)
+ * - otherwise: a quantity badge on the image (checkout summary)
+ *
+ * Items the store no longer sells (see $store.cart.checkAvailability) are
+ * faded and marked, with a Remove button either way.
+ */
+import QuantityStepper from "./QuantityStepper.astro";
+
+interface Props {
+  editable?: boolean;
+}
+
+const { editable = false } = Astro.props;
+---
+
+<li class="flex gap-3.5">
+  <div class="relative shrink-0" x-bind:class="$store.cart.isUnavailable(item.id) && 'opacity-50'">
+    <div class="size-[52px] bg-gray-200 overflow-hidden border border-transparent group-data-[theme=round]/body:rounded-md group-data-[theme=brutalist]/body:border-primary">
+      <img x-bind:src="item.image" x-bind:alt="item.name" class="size-full object-contain" />
+    </div>
+    {!editable && (
+      <div
+        class="absolute -top-2 -right-2 flex items-center justify-center size-5 rounded-full bg-gray-400 text-xs text-gray-50"
+        x-text="item.quantity"
+      ></div>
+    )}
+  </div>
+
+  <div class="flex flex-col gap-1 flex-1 min-w-0">
+    <div class="flex items-center justify-between gap-2">
+      <span class="block flex-1 text-sm font-medium truncate" x-text="item.name"></span>
+      <span
+        class="block text-sm font-semibold"
+        x-text="formatPrice(item.price * item.quantity, item.currency)"
+      ></span>
+    </div>
+    <div class="flex items-center justify-between gap-2 text-sm text-gray-500">
+      <span class="block flex-1 truncate" x-text="item.variant"></span>
+      <span class="block" x-text="`${formatPrice(item.price, item.currency)} each`"></span>
+    </div>
+
+    <template x-if="$store.cart.isUnavailable(item.id)">
+      <div class="flex items-center justify-between gap-2 text-sm">
+        <span class="text-red-700">No longer available</span>
+        {!editable && (
+          <button
+            type="button"
+            class="underline cursor-pointer hover:text-gray-700"
+            x-on:click="$store.cart.removeItem(item.id)"
+          >Remove</button>
+        )}
+      </div>
+    </template>
+
+    {editable && (
+      <div class="flex items-center gap-4 pt-2">
+        <QuantityStepper
+          value="item.quantity"
+          decrease="$store.cart.updateItemQuantity(item.id, item.quantity - 1)"
+          increase="$store.cart.updateItemQuantity(item.id, item.quantity + 1)"
+        />
+        <button
+          type="button"
+          class="text-sm underline cursor-pointer hover:text-gray-700"
+          x-on:click="$store.cart.removeItem(item.id)"
+        >Remove</button>
+      </div>
+    )}
+  </div>
+</li>

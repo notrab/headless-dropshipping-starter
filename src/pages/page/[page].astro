@@ -1,0 +1,29 @@
+---
+/** Storefront pages after the first: /page/2, /page/3... (page 1 is the homepage) */
+import type { GetStaticPaths } from "astro";
+import { getCollection } from "astro:content";
+import PageLayout from "#layouts/PageLayout.astro";
+import ProductGrid from "#components/ProductGrid.astro";
+import { paginate, PRODUCTS_PER_PAGE } from "#lib/catalog";
+
+export const prerender = true;
+
+export const getStaticPaths = (async () => {
+  const products = await getCollection("products");
+  const { lastPage } = paginate(products, 1, PRODUCTS_PER_PAGE);
+
+  return Array.from({ length: lastPage - 1 }, (_, i) => {
+    const page = i + 2;
+    return {
+      params: { page: String(page) },
+      props: { products: paginate(products, page, PRODUCTS_PER_PAGE) },
+    };
+  });
+}) satisfies GetStaticPaths;
+
+const { products } = Astro.props;
+---
+
+<PageLayout title={`Products, page ${products.page}`}>
+  <ProductGrid products={products} />
+</PageLayout>
