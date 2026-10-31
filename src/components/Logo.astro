@@ -1,0 +1,19 @@
+---
+/** The store logo, linking back to the homepage */
+import { LOGO_URL, LOGO_PATH, STORE_NAME } from "astro:env/client";
+import { Image } from "astro:assets";
+import LogoPlaceholder from "../icons/logo.svg";
+
+const logoSrc = LOGO_URL || LOGO_PATH || LogoPlaceholder;
+---
+
+<a href="/" class="block w-[150px] h-[50px]">
+  <Image
+    src={logoSrc as string}
+    alt={`${STORE_NAME} home`}
+    width={150}
+    height={50}
+    loading="eager"
+    class="object-contain size-full object-left"
+  />
+</a>

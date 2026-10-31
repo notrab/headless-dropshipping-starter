@@ -1,0 +1,77 @@
+---
+/** The order summary on the checkout page: cart lines and server-priced totals */
+import CartLine from "./CartLine.astro";
+---
+<div class="pt-3 pb-5">
+	<!-- Empty State -->
+	<template x-if="$store.cart.isEmpty">
+		<div class="py-8 text-center text-gray-500">
+			<p>Your cart is empty</p>
+		</div>
+	</template>
+
+	<!-- Order Items -->
+	<template x-if="!$store.cart.isEmpty">
+		<div>
+			<ul class="space-y-4">
+				<template x-for="item in $store.cart.items" x-bind:key="item.id">
+					<CartLine />
+				</template>
+			</ul>
+
+			<hr class="my-4 md:my-6 border-gray-200">
+
+			<!-- Order Summary -->
+			<div class="space-y-4 md:space-y-6">
+				<div class="flex items-center">
+					<div class="flex-1 text-sm font-medium text-gray-500">Subtotal</div>
+					<div
+						class="text-sm font-semibold"
+						x-text="formatPrice($store.checkout.subtotal, $store.cart.currency)"
+					></div>
+				</div>
+
+				<div class="flex items-center">
+					<div class="flex-1 text-sm font-medium text-gray-500">Shipping</div>
+					<div class="text-sm">
+						<template x-if="$store.checkout.shippingCost === null">
+							<span class="text-gray-400">Add address to calculate</span>
+						</template>
+						<template x-if="$store.checkout.shippingCost === 0">
+							<span class="font-semibold text-green-600">FREE</span>
+						</template>
+						<template x-if="$store.checkout.shippingCost > 0">
+							<span
+								class="font-semibold"
+								x-text="formatPrice($store.checkout.shippingCost, $store.cart.currency)"
+							></span>
+						</template>
+					</div>
+				</div>
+
+				<!-- Only VAT the customer pays; Printful's own tax is a cost to us -->
+				<template x-if="$store.checkout.vatAmount > 0">
+					<div class="flex items-center">
+						<div class="flex-1 text-sm font-medium text-gray-500">VAT</div>
+						<span
+							class="text-sm font-semibold"
+							x-text="formatPrice($store.checkout.vatAmount, $store.cart.currency)"
+						></span>
+					</div>
+				</template>
+			</div>
+
+			<hr class="my-4 md:my-6 border-gray-200">
+
+			<div class="space-y-6">
+				<div class="flex items-center">
+					<div class="flex-1 text-sm font-medium text-gray-500">Total due</div>
+					<div
+						class="font-bold text-lg"
+						x-text="formatPrice($store.checkout.orderTotal, $store.cart.currency)"
+					></div>
+				</div>
+			</div>
+		</div>
+	</template>
+</div>

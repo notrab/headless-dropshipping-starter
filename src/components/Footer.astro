@@ -1,0 +1,29 @@
+---
+import { getCollection } from "astro:content";
+import { STORE_NAME } from "astro:env/client";
+
+const currentYear = new Date().getFullYear();
+const pages = await getCollection("pages");
+---
+
+<footer class="h-[72px] bg-white border-t border-gray-200">
+    <div class="container flex items-center justify-between h-full">
+        <div class="text-xs text-gray-600 font-medium">
+            © {currentYear} {STORE_NAME}
+        </div>
+        <div>
+            <nav class="flex items-center gap-5">
+                {
+                    pages.map((page) => (
+                        <a
+                            href={`/pages/${page.id}`}
+                            class="text-sm hover:underline"
+                        >
+                            {page.data.title}
+                        </a>
+                    ))
+                }
+            </nav>
+        </div>
+    </div>
+</footer>

@@ -1,0 +1,93 @@
+---
+import RootLayout from "#layouts/RootLayout.astro";
+import Logo from "#components/Logo.astro";
+import OrderStatusSteps from "#components/OrderStatusSteps.astro";
+import OrderLines from "#components/OrderLines.astro";
+import CustomerInformation from "#components/CustomerInformation.astro";
+import OrderHelp from "#components/OrderHelp.astro";
+import CompletePayment from "#components/CompletePayment.astro";
+import Button from "#components/Button.astro";
+import { StoreError } from "#lib/errors";
+import { getOrderSummary, type OrderSummary } from "#lib/orders";
+import { isPaid, orderMessage } from "#lib/order-status";
+import { formatDateTime } from "#utils";
+
+// The payment intent ID doubles as the Printful order's external ID
+const { paymentIntentId } = Astro.params;
+if (!paymentIntentId) {
+  return Astro.redirect("/");
+}
+
+let summary: OrderSummary;
+try {
+  summary = await getOrderSummary(paymentIntentId);
+} catch (error) {
+  if (error instanceof StoreError && error.code === "PRINTFUL_BUSY") {
+    return Astro.rewrite("/busy");
+  }
+  console.error("Failed to fetch order:", error);
+  return Astro.redirect("/404");
+}
+
+const { order, payment, lines, totals, currency } = summary;
+const message = orderMessage(order.status, payment.status);
+const trackingUrl = order.shipments.find((s) => s.tracking_url)?.tracking_url;
+---
+
+<RootLayout title={`Order #${order.id}`}>
+  <section class="flex flex-wrap flex-col-reverse md:flex-row h-full">
+    <div class="w-full md:w-1/2 bg-white py-8 px-6 lg:px-16 overflow-y-auto">
+      <div class="lg:max-w-[560px] ml-auto">
+        <div class="mb-10"><Logo /></div>
+        <div class="flex flex-col gap-y-6">
+          <div class="order-1">
+            <h1 class="text-[32px] font-bold">Order #{order.id}</h1>
+            <time class="text-sm text-gray-600">{formatDateTime(order.created)}</time>
+          </div>
+
+          {isPaid(payment.status) && <OrderStatusSteps order={order} class="order-3 lg:order-1" />}
+
+          <div class="order-2">
+            <div class="mb-6">
+              <h2 class="text-lg/[1.25] font-semibold mb-3">{message.title}</h2>
+              <p class="text-sm/[1.75] text-gray-600">{message.body}</p>
+            </div>
+
+            {payment.status === "unpaid" && (
+              <CompletePayment
+                paymentIntentId={paymentIntentId}
+                clientSecret={payment.clientSecret}
+                amount={totals.total}
+                currency={currency}
+              />
+            )}
+
+            {trackingUrl && (
+              <Button href={trackingUrl} target="_blank" rel="noopener noreferrer" class="w-full">
+                Track shipment
+              </Button>
+            )}
+          </div>
+
+          <div class="block md:hidden order-4 bg-gray-50 -mx-6 p-6">
+            <h3 class="font-semibold text-lg mb-2">Order information</h3>
+            <OrderLines lines={lines} totals={totals} currency={currency} />
+          </div>
+
+          <div class="order-5">
+            <CustomerInformation summary={summary} />
+          </div>
+
+          <OrderHelp class="order-6" />
+        </div>
+      </div>
+    </div>
+
+    <div class="hidden md:block md:w-1/2 bg-gray-50 pt-8 lg:pt-20 px-6 lg:px-16">
+      <div class="md:sticky md:top-6 lg:max-w-[400px] mr-auto">
+        <h3 class="font-semibold text-lg mb-2">Your order</h3>
+        <OrderLines lines={lines} totals={totals} currency={currency} />
+      </div>
+    </div>
+  </section>
+</RootLayout>

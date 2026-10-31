@@ -1,0 +1,70 @@
+---
+import type { PrintfulOrder } from "#lib/printful/types";
+import { formatDateTime } from "#utils";
+
+interface Props {
+  order: Pick<PrintfulOrder, "created" | "shipments">;
+  class?: string;
+}
+
+const { order, class: className } = Astro.props;
+// Printful v1 orders expose `created` (unix seconds); shipment timestamps
+// live on each entry in `shipments` as `shipped_at`.
+const { created, shipments = [] } = order;
+const shippedAt = shipments.find((s) => s.shipped_at)?.shipped_at;
+
+---
+<div class="w-full bg-gray-50 group-data-[theme=round]/body:rounded-lg group-data-[theme=round]/body:xl:rounded-full py-4 px-4 xl:px-7" class:list={[className]}>
+    <div class="flex flex-wrap gap-3">
+      <div class="w-full xl:w-auto flex justify-between items-center truncate gap-3">
+        <div class="flex flex-col gap-1">
+          <div class="flex items-center justify-between">
+            <span class="block text-gray-900 font-semibold text-sm">Confirmed</span>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="hidden xl:block">
+              <path d="M3.125 9.85839L7.84167 14.5751L17.2917 5.14172" stroke="#10B981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+            </svg>
+          </div>
+          <time class="text-sm text-gray-600 truncate">{formatDateTime(created)}</time>
+        </div>
+        <svg width="20" height="48" viewBox="0 0 20 48" fill="none" xmlns="http://www.w3.org/2000/svg" class="hidden xl:block">
+          <path d="M6 43.5894L13.7667 23.5894L6 3.58941" stroke="#E5E7EB" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="block xl:hidden">
+          <path d="M3.125 9.85839L7.84167 14.5751L17.2917 5.14172" stroke="#10B981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+      </div>
+      <div class="w-full xl:w-auto flex justify-between items-center truncate gap-3">
+        <div class="flex flex-col gap-1">
+          <div class="flex items-center justify-between">
+            <span class="block font-semibold text-sm" class:list={[shippedAt ? "text-gray-900" : "text-gray-400"]}>Shipped</span>
+            {shippedAt && (
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="hidden xl:block">
+                <path d="M3.125 9.85839L7.84167 14.5751L17.2917 5.14172" stroke="#10B981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            )}
+          </div>
+          {shippedAt ? (
+            <time class="text-sm text-gray-600 truncate">{formatDateTime(shippedAt)}</time>
+          ) : (
+            <span class="text-gray-400">-</span>
+          )}
+        </div>
+        <svg width="20" height="48" viewBox="0 0 20 48" fill="none" xmlns="http://www.w3.org/2000/svg" class="hidden xl:block">
+          <path d="M6 43.5894L13.7667 23.5894L6 3.58941" stroke="#E5E7EB" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        {shippedAt && (
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="block xl:hidden">
+            <path d="M3.125 9.85839L7.84167 14.5751L17.2917 5.14172" stroke="#10B981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        )}
+      </div>
+      <div class="w-full xl:w-auto justify-between truncate">
+        <div class="flex flex-col gap-1">
+          <div class="flex items-center justify-between">
+            <span class="block text-gray-400 font-semibold text-sm">Delivered</span>
+          </div>
+          <span class="text-gray-400">-</span>
+        </div>
+      </div>
+    </div>
+  </div>

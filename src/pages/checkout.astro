@@ -1,0 +1,91 @@
+---
+import { Icon } from "astro-icon/components";
+import CartSummary from "#components/CartSummary.astro";
+import Logo from "#components/Logo.astro";
+import CheckoutFooter from "#components/checkout/CheckoutFooter.astro";
+import MobileOrderSummary from "#components/checkout/MobileOrderSummary.astro";
+import PayButton from "#components/checkout/PayButton.astro";
+import ShippingMethods from "#components/checkout/ShippingMethods.astro";
+import RootLayout from "#layouts/RootLayout.astro";
+---
+
+<RootLayout title="Checkout">
+  <MobileOrderSummary watch="order-summary" />
+
+  <section class="flex flex-wrap flex-col-reverse md:flex-row">
+    <div class="size-full md:w-1/2 bg-white py-8 px-6 lg:px-16">
+      <div class="lg:max-w-[560px] ml-auto space-y-6 md:space-y-8">
+        <div class="hidden md:block"><Logo /></div>
+
+        <h2 class="text-lg font-semibold">Ship to</h2>
+
+        <!-- The empty divs are filled by Stripe Elements (see scripts/checkout.ts) -->
+        <form id="payment-form" class="space-y-6">
+          <fieldset>
+            <legend class="sr-only">Contact information</legend>
+            <div id="link-auth-element" class="mt-4"></div>
+          </fieldset>
+
+          <hr class="my-6 md:my-8 border-gray-300" />
+
+          <fieldset>
+            <legend class="sr-only">Shipping address</legend>
+            <div id="shipping-address-element"></div>
+          </fieldset>
+
+          <hr class="my-8 border-gray-300" />
+
+          <ShippingMethods />
+
+          <hr class="my-6 md:my-8 border-gray-300" />
+
+          <fieldset class="space-y-4 md:space-y-6">
+            <legend class="flex items-center gap-3 font-semibold text-lg">
+              <Icon name="lock" class="size-5" />
+              Secure payment
+            </legend>
+            <div id="payment-element"></div>
+          </fieldset>
+
+          <hr class="my-6 md:my-8 border-gray-300" />
+
+          <fieldset class="space-y-4">
+            <legend class="text-lg font-semibold">Billing address</legend>
+            <div id="billing-address-element"></div>
+          </fieldset>
+
+          <div class="space-y-6">
+            <p class="text-gray-500 text-sm">
+              By placing this order, you agree to our
+              <a href="/pages/terms" class="underline text-gray-700">Terms of Service</a>
+              and understand our
+              <a href="/pages/privacy" class="underline text-gray-700">Privacy Policy</a>.
+            </p>
+
+            <div
+              id="validation-errors"
+              role="alert"
+              class="hidden p-4 text-sm bg-red-50 text-red-700 border border-red-200 group-data-[theme=round]/body:rounded-2xl"
+            ></div>
+
+            <PayButton />
+          </div>
+
+          <CheckoutFooter />
+        </form>
+      </div>
+    </div>
+
+    <div id="order-summary" class="md:w-1/2 bg-gray-50 pt-8 lg:pt-20 px-6 lg:px-16">
+      <div class="md:sticky md:top-6 lg:max-w-[400px] mr-auto">
+        <div class="block md:hidden mb-4"><Logo /></div>
+        <h2 class="hidden md:block font-semibold text-lg mb-2">Your order</h2>
+        <CartSummary />
+      </div>
+    </div>
+  </section>
+</RootLayout>
+
+<script>
+  import "#scripts/checkout";
+</script>

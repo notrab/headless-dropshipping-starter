@@ -1,0 +1,95 @@
+---
+/**
+ * Lets a customer pay for an order whose payment didn't go through (declined
+ * card, abandoned redirect...). It only needs the payment intent's client
+ * secret, which can pay but can't change the order (see lib/stripe.ts).
+ */
+import Button from "./Button.astro";
+import { formatPrice } from "#utils";
+
+interface Props {
+  paymentIntentId: string;
+  clientSecret: string;
+  amount: number;
+  currency: string;
+}
+
+const { paymentIntentId, clientSecret, amount, currency } = Astro.props;
+---
+
+<form
+  data-complete-payment
+  data-payment-intent-id={paymentIntentId}
+  data-client-secret={clientSecret}
+  class="space-y-4"
+>
+  <div data-payment-element></div>
+  <div data-error role="alert" class="hidden p-4 text-sm bg-red-50 text-red-700 border border-red-200 group-data-[theme=round]/body:rounded-2xl"></div>
+  <Button type="submit" class="w-full" disabled>Pay {formatPrice(amount, currency)}</Button>
+</form>
+
+<script>
+  import { loadStripe } from "@stripe/stripe-js";
+  import { PUBLIC_STRIPE_PUBLISHABLE_KEY } from "astro:env/client";
+  import { elementsAppearance } from "#lib/stripe-elements";
+
+  const form = document.querySelector<HTMLFormElement>("[data-complete-payment]");
+  if (form) setUpPayment(form);
+
+  async function setUpPayment(form: HTMLFormElement) {
+    const { paymentIntentId = "", clientSecret = "" } = form.dataset;
+    const button = form.querySelector<HTMLButtonElement>("button[type=submit]")!;
+    const errorBox = form.querySelector<HTMLElement>("[data-error]")!;
+
+    const showError = (message: string) => {
+      errorBox.textContent = message;
+      errorBox.classList.remove("hidden");
+    };
+
+    const stripe = await loadStripe(PUBLIC_STRIPE_PUBLISHABLE_KEY);
+    if (!stripe) {
+      showError("Payments couldn't be loaded. Please refresh and try again.");
+      return;
+    }
+
+    const elements = stripe.elements({ clientSecret, appearance: elementsAppearance() });
+    elements.create("payment", { layout: "tabs" }).mount("[data-payment-element]");
+    button.disabled = false;
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      errorBox.classList.add("hidden");
+      button.disabled = true;
+
+      // Validate and collect wallet details first, while still handling the click
+      const { error: submitError } = await elements.submit();
+      if (submitError) {
+        showError(submitError.message ?? "Please check your payment details.");
+        button.disabled = false;
+        return;
+      }
+
+      // Redirect-based methods come back to return_url; everything else resolves here
+      const returnUrl = new URL("/thankyou", window.location.origin);
+      const { error } = await stripe.confirmPayment({
+        elements,
+        confirmParams: { return_url: returnUrl.href },
+        redirect: "if_required",
+      });
+
+      if (error) {
+        const isCustomerError = error.type === "card_error" || error.type === "validation_error";
+        showError(
+          isCustomerError && error.message
+            ? error.message
+            : "An unexpected error occurred. Please try again.",
+        );
+        button.disabled = false;
+        return;
+      }
+
+      returnUrl.searchParams.set("payment_intent", paymentIntentId);
+      window.location.href = returnUrl.href;
+    });
+  }
+</script>

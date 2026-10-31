@@ -1,0 +1,34 @@
+---
+import CartSummaryPopover from "./CartSummaryPopover.astro";
+import { Icon } from "astro-icon/components";
+import Logo from "./Logo.astro";
+---
+
+<header class="h-[72px] bg-white">
+  <div class="container flex items-center justify-between h-full">
+    <Logo />
+    <ul class="flex items-center gap-5">
+      <li>
+        <button class="relative block size-5 cursor-pointer" popovertarget="cart-summary" style="anchor-name: --cart-button;">
+          <Icon name="cart" class:list="size-5" />
+          <div
+            x-data="{ previousCount: 0 }"
+            x-effect="
+              const currentCount = $store.cart.totalItems;
+              if (currentCount > previousCount && previousCount > 0) {
+                $el.style.transform = 'scale(1.3)';
+                setTimeout(() => { $el.style.transform = 'scale(1)'; }, 200);
+              }
+              previousCount = currentCount;
+            "
+            x-cloak
+            x-show="!$store.cart.isEmpty"
+            x-text="$store.cart.totalItems > 9 ? '9+' : $store.cart.totalItems"
+            class="absolute -top-2 -right-2 flex items-center justify-center size-4 rounded-full bg-red-500 ring-[2.5px] ring-white text-[10px] text-white transition-transform duration-200"
+          ></div>
+        </button>
+      </li>
+    </ul>
+  </div>
+  <CartSummaryPopover />
+</header>

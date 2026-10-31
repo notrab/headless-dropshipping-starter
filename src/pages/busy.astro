@@ -1,0 +1,39 @@
+---
+/**
+ * Shown in place of a page (via Astro.rewrite) when Printful is rate limiting
+ * us, so the customer keeps their URL and can simply refresh. `?after=payment`
+ * reassures customers coming back from checkout that their payment went
+ * through.
+ */
+import RootLayout from "#layouts/RootLayout.astro";
+import Button from "#components/Button.astro";
+import Logo from "#components/Logo.astro";
+
+export const prerender = false;
+
+const afterPayment = Astro.url.searchParams.get("after") === "payment";
+
+Astro.response.status = 503;
+Astro.response.headers.set("Retry-After", "60");
+---
+
+<RootLayout title="We're busy">
+  <main class="container max-w-xl py-16 space-y-6">
+    <Logo />
+    <h1 class="text-2xl font-semibold">We're very busy right now</h1>
+    {
+      afterPayment ? (
+        <p class="text-gray-600">
+          Your payment went through and your order is safe. We just can't load
+          its details at the moment. Please refresh this page in a minute.
+        </p>
+      ) : (
+        <p class="text-gray-600">
+          We can't load this page at the moment. Please refresh it in a minute.
+        </p>
+      )
+    }
+    <!-- An empty href reloads the page the customer asked for, query and all -->
+    <Button href="" variant="secondary" size="sm">Try again</Button>
+  </main>
+</RootLayout>

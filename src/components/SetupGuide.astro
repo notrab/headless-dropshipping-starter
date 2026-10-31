@@ -1,0 +1,68 @@
+---
+/**
+ * The store setup checklist, shown on the homepage in dev when there are no
+ * products yet. Production shows a neutral "opening soon" page instead, so the
+ * public never sees which keys are missing.
+ */
+import type { SetupCheck } from "#lib/setup";
+
+interface Props {
+  checks: SetupCheck[];
+}
+
+const { checks } = Astro.props;
+const icon = { ok: "✓", problem: "✗", skipped: "–" } as const;
+const iconClass = {
+  ok: "bg-green-100 text-green-700",
+  problem: "bg-red-100 text-red-700",
+  skipped: "bg-gray-100 text-gray-400",
+} as const;
+---
+
+<main class="container max-w-2xl py-12 space-y-8">
+  <div class="space-y-2">
+    <h1 class="text-2xl font-semibold">Finish setting up your store</h1>
+    <p class="text-gray-600">
+      You're seeing this because the store has no products yet. Fix the items
+      below, then restart the dev server (<code>npx astro dev stop</code>, then
+      <code>npm run dev</code>). Only you see this page: in production it's
+      replaced by an "opening soon" page.
+    </p>
+  </div>
+
+  <ol class="divide-y divide-gray-200 border-y border-gray-200">
+    {checks.map((check) => (
+      <li class="flex gap-4 py-4">
+        <span
+          aria-hidden="true"
+          class={`flex items-center justify-center shrink-0 size-7 rounded-full text-sm font-semibold ${iconClass[check.status]}`}
+        >
+          {icon[check.status]}
+        </span>
+        <div class="space-y-1 min-w-0">
+          <p class:list={["font-medium", check.status === "skipped" && "text-gray-400"]}>
+            {check.title}
+            <span class="sr-only">: {check.status}</span>
+          </p>
+          {check.status === "problem" && check.help && (
+            <p class="text-sm text-gray-600 whitespace-pre-line break-words">{check.help}</p>
+          )}
+          {check.status === "problem" && check.link && (
+            <a href={check.link} target="_blank" rel="noopener noreferrer" class="text-sm underline">
+              Open {new URL(check.link).hostname}
+            </a>
+          )}
+        </div>
+      </li>
+    ))}
+  </ol>
+
+  <div class="rounded-lg bg-gray-50 p-5 text-sm text-gray-700 space-y-2">
+    <p class="font-medium">The quickest fix</p>
+    <p>
+      Run <code class="px-1.5 py-0.5 rounded bg-white border border-gray-200">npm run setup</code>
+      in your terminal. It asks for each key, checks it, and writes your
+      <code class="px-1.5 py-0.5 rounded bg-white border border-gray-200">.env</code>.
+    </p>
+  </div>
+</main>

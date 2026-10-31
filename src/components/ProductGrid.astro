@@ -1,0 +1,26 @@
+---
+/** One page of the storefront: product cards and links to the other pages */
+import type { CollectionEntry } from "astro:content";
+import Pagination from "./Pagination.astro";
+import ProductCard from "./ProductCard.astro";
+import type { Paginated } from "#lib/catalog";
+
+interface Props {
+  products: Paginated<CollectionEntry<"products">>;
+}
+
+const { items, page, lastPage } = Astro.props.products;
+
+/** Cards visible without scrolling on a wide screen (one row of three) */
+const FIRST_ROW = 3;
+---
+
+<main class="container pb-8">
+  <slot />
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {items.map((product, index) => (
+      <ProductCard product={product} eager={index < FIRST_ROW} />
+    ))}
+  </div>
+  <Pagination page={page} lastPage={lastPage} />
+</main>

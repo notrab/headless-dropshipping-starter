@@ -1,0 +1,50 @@
+---
+/** Shipping options for the entered address, from $store.checkout */
+---
+
+<fieldset class="space-y-4">
+  <legend class="text-lg font-semibold">Shipping method</legend>
+
+  <div
+    x-show="$store.checkout.availableShippingMethods.length === 0"
+    class="p-5 md:p-7 bg-gray-50 text-gray-500 text-sm text-center group-data-[theme=round]/body:rounded-3xl"
+  >
+    Enter your shipping address to view available shipping methods.
+  </div>
+
+  <div x-cloak x-show="$store.checkout.availableShippingMethods.length > 0" class="space-y-3">
+    <template x-for="method in $store.checkout.availableShippingMethods" x-bind:key="method.id">
+      <label
+        x-data="{ get selected() { return $store.checkout.selectedShippingMethod?.id === method.id } }"
+        x-bind:class="selected ? 'border-primary bg-gray-50' : 'border-gray-300'"
+        class="flex items-center justify-between gap-3 p-4 border cursor-pointer hover:bg-gray-50 transition-colors group-data-[theme=brutalist]/body:border-primary group-data-[theme=round]/body:rounded-2xl"
+      >
+        <input
+          type="radio"
+          name="shipping_method"
+          class="sr-only"
+          x-bind:value="method.id"
+          x-bind:checked="selected"
+          x-on:change="$store.checkout.changeShippingMethod(method)"
+        />
+        <span
+          aria-hidden="true"
+          x-bind:class="selected ? 'border-primary bg-primary' : 'border-gray-300'"
+          class="relative shrink-0 size-5 border-2 rounded-full"
+        >
+          <span x-show="selected" class="absolute inset-0 m-auto size-2 bg-white rounded-full"></span>
+        </span>
+        <span class="flex-1">
+          <span class="block font-medium text-gray-900" x-text="method.name"></span>
+          <template x-if="method.minDeliveryDays && method.maxDeliveryDays">
+            <span
+              class="block text-sm text-gray-500"
+              x-text="`Estimated delivery: ${method.minDeliveryDays}-${method.maxDeliveryDays} days`"
+            ></span>
+          </template>
+        </span>
+        <span class="font-semibold text-gray-900" x-text="formatPrice(method.rate, $store.cart.currency)"></span>
+      </label>
+    </template>
+  </div>
+</fieldset>

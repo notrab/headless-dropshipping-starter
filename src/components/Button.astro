@@ -1,0 +1,47 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cn } from "#utils";
+
+type Props = {
+  variant?: "primary" | "secondary";
+  size?: "sm" | "md" | "lg";
+} & (
+  | ({ href: string } & HTMLAttributes<"a">)
+  | ({ href?: undefined } & HTMLAttributes<"button">)
+);
+
+// Renders a link when given an href, otherwise a <button> (type="button"
+// unless set). Any other attributes (id, data-*, x-bind:*...) pass through.
+// Explicit attributes win over spread ones in Astro, so spread first.
+const { variant = "primary", size = "md", class: className, ...attrs } = Astro.props;
+
+const variantClasses = {
+  primary: "bg-primary text-white hover:bg-primary/90",
+  secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200",
+};
+
+const sizeClasses = {
+  sm: "px-4 h-[40px] text-[14px]",
+  md: "px-4 h-[44px] text-[14px]",
+  lg: "px-4 h-[52px] text-[16px]",
+};
+
+const classes = cn(
+  "inline-flex items-center justify-center text-center font-medium transition-colors duration-200 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed group-data-[theme=round]/body:rounded-full",
+  variantClasses[variant],
+  sizeClasses[size],
+  className,
+);
+---
+
+{
+  attrs.href !== undefined ? (
+    <a {...attrs} class={classes}>
+      <slot />
+    </a>
+  ) : (
+    <button {...attrs} type={attrs.type ?? "button"} class={classes}>
+      <slot />
+    </button>
+  )
+}

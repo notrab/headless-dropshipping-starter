@@ -1,0 +1,24 @@
+---
+/** "Powered by Stripe" and the policy links under the Pay button */
+import { Icon } from "astro-icon/components";
+import { SUPPORT_EMAIL } from "astro:env/client";
+
+const links = [
+  { href: "/pages/refunds", label: "Returns" },
+  { href: "/pages/privacy", label: "Privacy Policy" },
+  ...(SUPPORT_EMAIL ? [{ href: `mailto:${SUPPORT_EMAIL}`, label: "Contact" }] : []),
+];
+---
+
+<div class="space-y-3 py-3">
+  <div class="flex justify-center">
+    <Icon name="powered-by-stripe" class="h-5" />
+  </div>
+  <ul class="flex items-center justify-center gap-2">
+    {links.map(({ href, label }) => (
+      <li>
+        <a href={href} class="text-sm text-gray-500 hover:text-gray-700 hover:underline">{label}</a>
+      </li>
+    ))}
+  </ul>
+</div>

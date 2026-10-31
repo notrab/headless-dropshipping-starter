@@ -1,0 +1,219 @@
+---
+export const prerender = true;
+
+import { getCollection, render } from "astro:content";
+import { getImage } from "astro:assets";
+import PageLayout from "#layouts/PageLayout.astro";
+import Select from "#components/Select.astro";
+import QuantityStepper from "#components/QuantityStepper.astro";
+import Button from "#components/Button.astro";
+import { MAX_QUANTITY } from "#stores/cartStore";
+import "@splidejs/splide/css/core";
+import ProductGallery from "#components/ProductGallery.astro";
+import { formatPriceRange } from "#utils";
+import { getProductVariants, toCartItem } from "#lib/catalog";
+
+export async function getStaticPaths() {
+    const products = await getCollection("products");
+
+    // A details file is matched by product ID; flag any that match nothing
+    const productIds = new Set(products.map((product) => product.id));
+    for (const details of await getCollection("productDetails")) {
+        if (!productIds.has(details.id)) {
+            console.warn(
+                `src/content/products/${details.id}.md doesn't match any Printful product, so it won't be shown`,
+            );
+        }
+    }
+
+    return products.map((product) => ({
+        params: { id: product.id },
+        props: { product },
+    }));
+}
+
+const { product } = Astro.props;
+const { name } = product.data;
+
+// Optional Markdown for this product (src/content/products/<id>.md). Filtering
+// rather than getEntry() because most products won't have a file, and
+// getEntry() warns about every one that doesn't.
+const [details] = await getCollection("productDetails", ({ id }) => id === product.id);
+const Description = details ? (await render(details)).Content : null;
+const variants = await getProductVariants(product.data.id);
+
+const unique = (values: (string | null)[]) =>
+    [...new Set(values.filter((value): value is string => Boolean(value)))];
+// The options a customer picks between. Colours/sizes with no values (e.g. a
+// mug has no size) are left out entirely.
+const choices = [
+    { name: "color", label: "Color", values: unique(variants.map((v) => v.color)) },
+    { name: "size", label: "Size", values: unique(variants.map((v) => v.size)) },
+].filter((choice) => choice.values.length > 0);
+
+// Everything the browser needs per variant: how to match the selects, and what
+// to add to the cart
+const options = variants.map((variant) => ({
+    color: variant.color?.toLowerCase() ?? null,
+    size: variant.size?.toLowerCase() ?? null,
+    item: toCartItem(variant, name),
+}));
+
+const currency = options[0]?.item.currency;
+const basePrice = formatPriceRange(options.map((o) => o.item.price), currency);
+
+// Every distinct mockup. Clothing sizes share one per colour; mugs and the
+// like have one per size.
+const gallery = unique(options.map((o) => o.item.image));
+if (gallery.length === 0 && product.data.thumbnail_url) {
+    gallery.push(product.data.thumbnail_url);
+}
+
+// Page metadata: the details file's frontmatter, falling back to Printful
+const meta = {
+    title: details?.data.title ?? name,
+    description: details?.data.description,
+    image: details?.data.image
+        ? {
+              // Resized for link previews (1200px wide is what most platforms use)
+              src: (await getImage({ src: details.data.image, width: 1200, format: "jpg" })).src,
+              alt: details.data.imageAlt ?? name,
+          }
+        : gallery[0]
+          ? { src: gallery[0], alt: name }
+          : undefined,
+};
+---
+
+<PageLayout {...meta}>
+    <main class="container pb-8 lg:pt-8">
+        <section
+            class="relative grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-20 mb-10 lg:mb-16"
+        >
+            <div>
+                <div class="sticky top-6">
+                    <ProductGallery product={{ name, gallery }} />
+                </div>
+            </div>
+
+            <div>
+                <h1 class="text-2xl lg:text-[32px] font-semibold mb-2">
+                    {name}
+                </h1>
+                <p class="text-lg font-semibold" id="product-price">
+                    {basePrice}
+                </p>
+
+                <form id="add-to-cart-form" data-options={JSON.stringify(options)} class="space-y-4 lg:space-y-6 mt-4 lg:mt-8">
+                    {/* Only ask when there's a choice; a single colour or size is just shown */}
+                    {choices.map(({ name, label, values }) =>
+                        values.length > 1 ? (
+                            <Select
+                                name={name}
+                                label={label}
+                                options={values.map((value) => ({
+                                    label: value,
+                                    value: value.toLowerCase(),
+                                }))}
+                                required
+                            />
+                        ) : (
+                            <p class="text-sm text-gray-500">
+                                {label}: <span class="font-medium text-gray-900">{values[0]}</span>
+                            </p>
+                        ),
+                    )}
+                    <div class="flex items-center gap-4" x-data="{ quantity: 1 }">
+                        <QuantityStepper
+                            name="quantity"
+                            value="quantity"
+                            decrease="quantity = Math.max(1, quantity - 1)"
+                            increase={`quantity = Math.min(${MAX_QUANTITY}, quantity + 1)`}
+                            class="h-[44px] min-w-[116px]"
+                        />
+                        <Button type="submit" class="flex-1" disabled={options.length === 0}>
+                            Add to cart
+                        </Button>
+                    </div>
+                    <p id="add-to-cart-error" class="hidden text-sm text-red-600">
+                        That combination isn't available. Please choose another.
+                    </p>
+                </form>
+
+                {Description && (
+                    <div class="prose prose-gray max-w-none mt-10 lg:mt-12">
+                        <Description />
+                    </div>
+                )}
+
+            </div>
+        </section>
+
+    </main>
+</PageLayout>
+
+<script>
+    import type { CartItem } from "#stores/cartStore";
+    import { formatPriceRange } from "#utils";
+
+    type Option = {
+        color: string | null;
+        size: string | null;
+        item: Omit<CartItem, "quantity">;
+    };
+
+    const form = document.querySelector<HTMLFormElement>("#add-to-cart-form")!;
+    const options: Option[] = JSON.parse(form.dataset.options ?? "[]");
+    const colorSelect = form.querySelector<HTMLSelectElement>('select[name="color"]');
+    const sizeSelect = form.querySelector<HTMLSelectElement>('select[name="size"]');
+    const quantityInput = form.querySelector<HTMLInputElement>('input[name="quantity"]');
+    const priceElement = document.getElementById("product-price")!;
+    const errorElement = document.getElementById("add-to-cart-error")!;
+
+    // Variants matching what's chosen so far (an empty select matches anything)
+    function matchingOptions() {
+        const color = colorSelect?.value;
+        const size = sizeSelect?.value;
+        return options.filter(
+            (option) =>
+                (!color || option.color === color) && (!size || option.size === size),
+        );
+    }
+
+    // Once every select is chosen there's exactly one matching variant. With no
+    // selects at all (nothing to choose), take the first.
+    function selectedOption() {
+        const matches = matchingOptions();
+        if (!colorSelect && !sizeSelect) return matches[0];
+        return matches.length === 1 ? matches[0] : undefined;
+    }
+
+    // Show the price of what's chosen, or "From £x" while the choice is open
+    function update() {
+        const matches = matchingOptions();
+        errorElement.classList.toggle("hidden", matches.length > 0);
+        if (matches.length > 0) {
+            priceElement.textContent = formatPriceRange(
+                matches.map((o) => o.item.price),
+                matches[0].item.currency,
+            );
+        }
+    }
+
+    colorSelect?.addEventListener("change", update);
+    sizeSelect?.addEventListener("change", update);
+
+    form.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const option = selectedOption();
+        if (!option) {
+            errorElement.classList.remove("hidden");
+            return;
+        }
+
+        const quantity = Math.max(1, parseInt(quantityInput?.value ?? "") || 1);
+        window.Alpine.store("cart").addItem(option.item, quantity);
+        document.getElementById("cart-summary")?.showPopover();
+    });
+</script>
